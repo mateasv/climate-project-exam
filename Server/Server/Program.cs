@@ -1,14 +1,19 @@
+using Microsoft.EntityFrameworkCore;
 using Server.Hubs;
+using Server.Models;
+
+
+// Scaffold-DbContext "Server=DESKTOP-4AN5991;Database=TreeDB;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
-//builder.Services.AddDbContext<CanteenDBContext>(options =>
-//{
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-//});
+builder.Services.AddDbContext<TreeDBContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 builder.Services.AddControllers();
 
 var app = builder.Build();
