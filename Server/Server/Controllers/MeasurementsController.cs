@@ -89,6 +89,8 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Measurement>> PostMeasurement(Measurement measurement)
         {
+            return new CreatedResult("test","test");
+
           if (_context.Measurements == null)
           {
               return Problem("Entity set 'TreeDBContext.Measurements'  is null.");

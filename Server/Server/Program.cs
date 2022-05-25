@@ -14,7 +14,8 @@ builder.Services.AddDbContext<TreeDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddControllersAsServices();
+
 
 var app = builder.Build();
 
