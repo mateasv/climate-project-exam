@@ -43,7 +43,7 @@ namespace Server.Controllers
         {
             var measurements = await _measurementsController.GetMeasurement(id);
             
-            if(measurements.Value() == null)
+            if(measurements.Value == null)
             {
 
             }
