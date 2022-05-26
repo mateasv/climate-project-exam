@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Server.Extensions;
 using Server.Hubs;
 using Server.Models;
 
-
+// https://code-maze.com/ten-things-avoid-aspnetcore-controllers/ best practices for controllers
 // Scaffold-DbContext "Server=DESKTOP-4AN5991;Database=TreeDB;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,10 +15,13 @@ builder.Services.AddDbContext<TreeDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddAutoMapper(typeof(Program)); // https://code-maze.com/automapper-net-core/
 builder.Services.AddControllers().AddControllersAsServices();
 
 
 var app = builder.Build();
+
+app.ConfigureCustomExceptionMiddleware(); // https://code-maze.com/global-error-handling-aspnetcore/
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

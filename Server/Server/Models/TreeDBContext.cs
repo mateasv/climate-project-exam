@@ -38,6 +38,14 @@ namespace Server.Models
 
                 entity.Property(e => e.DataloggerId).HasColumnName("datalogger_id");
 
+                entity.Property(e => e.MaxAirHumidity).HasColumnName("max__air_humidity");
+
+                entity.Property(e => e.MaxAirTemperature).HasColumnName("max_air_temperature");
+
+                entity.Property(e => e.MinAirHumidity).HasColumnName("min_air_humidity");
+
+                entity.Property(e => e.MinAirTemperature).HasColumnName("min_air_temperature");
+
                 entity.Property(e => e.PlantId).HasColumnName("plant_id");
 
                 entity.HasOne(d => d.Plant)
@@ -56,9 +64,18 @@ namespace Server.Models
 
                 entity.Property(e => e.AirTemerature).HasColumnName("air_temerature");
 
+                entity.Property(e => e.DataloggerId).HasColumnName("datalogger_id");
+
                 entity.Property(e => e.PlantId).HasColumnName("plant_id");
 
                 entity.Property(e => e.SoilHumidity).HasColumnName("soil_humidity");
+
+                entity.Property(e => e.SoilIsDry).HasColumnName("soil_is_dry");
+
+                entity.HasOne(d => d.Datalogger)
+                    .WithMany(p => p.Measurements)
+                    .HasForeignKey(d => d.DataloggerId)
+                    .HasConstraintName("FK_measurement_datalogger");
 
                 entity.HasOne(d => d.Plant)
                     .WithMany(p => p.Measurements)

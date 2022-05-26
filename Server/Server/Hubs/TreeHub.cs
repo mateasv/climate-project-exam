@@ -4,45 +4,38 @@ namespace Server.Hubs
 {
     public class TreeHub : Hub<ITreeHubClient>
     {
-        private static readonly Dictionary<string,string> Dataloggers = new();
-
-        
+        private static readonly Dictionary<string,int> Dataloggers = new();
         public async Task SendHello()
         {
             await Clients.All.ReceiveHello("A");
         }
 
-        public async Task<bool> RegisterDatalogger(string id)
+        public async Task RegisterDatalogger(int id)
         {
-            if(Dataloggers.TryAdd(Context.ConnectionId, id))
+            if (!Dataloggers.ContainsKey(Context.ConnectionId) && !Dataloggers.ContainsValue(id))
             {
-                return true;
-            }
-            else
-            {
-                return false;
+                await Groups.AddToGroupAsync(Context.ConnectionId, $"Datalogger: {id}");
+                Dataloggers.Add(Context.ConnectionId, id);
             }
         }
 
-        public async Task<bool> RegisterApp()
+        public async Task RegisterApp()
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId,"Apps");
-
-            return true;
+            await Groups.AddToGroupAsync(Context.ConnectionId,"AppClient");
         }
 
         public override Task OnConnectedAsync()
         {
-            
             return base.OnConnectedAsync();
         }
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {
-            if (Dataloggers.ContainsValue(Context.ConnectionId))
+            if (!Dataloggers.ContainsKey(Context.ConnectionId))
             {
                 Dataloggers.Remove(Context.ConnectionId);
             }
+
             return base.OnDisconnectedAsync(exception);
         }
     }
