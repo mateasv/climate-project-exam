@@ -34,6 +34,9 @@ namespace XamarinBase
 
             // Add core services
             services.AddSingleton<IDataService, SampleDataService>();
+            services.AddSingleton(new DatabaseService());
+            services.AddSingleton(new SignalRService());
+            services.AddSingleton(new ChartService());
 
             ServiceProvider = services.BuildServiceProvider();
         }
