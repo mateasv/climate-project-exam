@@ -1,8 +1,11 @@
-﻿using Microcharts;
+﻿//https://github.com/microcharts-dotnet/Microcharts
+
+using Microcharts;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace XamarinBase.Services
 {
@@ -13,36 +16,18 @@ namespace XamarinBase.Services
 
         }
 
-        public Chart CreateChart() {
-            var entries = new[]
-            {
-                new ChartEntry(212)
-                {
-                    Label = "UWP",
-                    ValueLabel = "112",
-                    Color = SKColor.Parse("#2c3e50")
-                },
-                new ChartEntry(248)
-                {
-                    Label = "Android",
-                    ValueLabel = "648",
-                    Color = SKColor.Parse("#77d065")
-                },
-                new ChartEntry(128)
-                {
-                    Label = "iOS",
-                    ValueLabel = "428",
-                    Color = SKColor.Parse("#b455b6")
-                },
-                new ChartEntry(514)
-                {
-                    Label = "Forms",
-                    ValueLabel = "214",
-                    Color = SKColor.Parse("#3498db")
-                }
-            };
+        public Chart CreateChart<T>(IEnumerable<T> data, Func<T,float> value, Func<T,string> label) {
+            var entries = new List<ChartEntry>();
 
+            data.ToList().ForEach(item => entries.Add(new ChartEntry(value(item))
+            {
+                Label = label(item),
+                ValueLabel = value(item).ToString()
+            }));
+            
             var chart = new LineChart { Entries = entries };
+            chart.LabelOrientation = Orientation.Horizontal;
+            chart.ValueLabelOrientation = Orientation.Horizontal;
 
             return chart;
         }

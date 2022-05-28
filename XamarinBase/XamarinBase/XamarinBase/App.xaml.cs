@@ -3,6 +3,7 @@ using System;
 using Xamarin.Forms;
 using XamarinBase.Services;
 using XamarinBase.ViewModels;
+using ZXing.Net.Mobile.Forms;
 
 namespace XamarinBase
 {
@@ -19,7 +20,7 @@ namespace XamarinBase
 
             SetupServices(addPlatformServices);
 
-            MainPage = new MainPage();
+            MainPage = new ZXingScannerPage();
         }
 
         void SetupServices(Action<IServiceCollection> addPlatformServices = null)
