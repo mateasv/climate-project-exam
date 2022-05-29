@@ -3,6 +3,7 @@ using System;
 using Xamarin.Forms;
 using XamarinBase.Services;
 using XamarinBase.ViewModels;
+using XamarinBase.Views;
 using ZXing.Net.Mobile.Forms;
 
 namespace XamarinBase
@@ -20,7 +21,10 @@ namespace XamarinBase
 
             SetupServices(addPlatformServices);
 
-            MainPage = new ZXingScannerPage();
+            var navigationPage = new NavigationPage();
+            navigationPage.PushAsync(new MainPage());
+
+            MainPage = navigationPage;
         }
 
         void SetupServices(Action<IServiceCollection> addPlatformServices = null)
@@ -32,12 +36,12 @@ namespace XamarinBase
 
             // Add ViewModels
             services.AddTransient<MainViewModel>();
+            services.AddTransient<ConnectionViewModel>();
 
             // Add core services
-            services.AddSingleton<IDataService, SampleDataService>();
-            services.AddSingleton(new DatabaseService());
-            services.AddSingleton(new SignalRService());
-            services.AddSingleton(new ChartService());
+            services.AddSingleton<IDatabaseService,DatabaseService>();
+            services.AddSingleton<ISignalRService,SignalRService>();
+            services.AddSingleton<IChartService,ChartService>();
 
             ServiceProvider = services.BuildServiceProvider();
         }

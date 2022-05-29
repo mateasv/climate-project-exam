@@ -2,60 +2,103 @@
 using Server.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Xamarin.Forms;
 using XamarinBase.Exstensions;
 using XamarinBase.Models;
 using XamarinBase.Services;
+using System.Linq;
+using XamarinBase.Views;
 
 namespace XamarinBase.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        private DataModel _dataModel;
+        private readonly ISignalRService _signalRService;
+        private readonly IDatabaseService _databaseService;
 
-        public DataModel DataModel
+        private ObservableCollection<PlantViewModel> _plantViewModels;
+
+        public ObservableCollection<PlantViewModel> PlantViewModels
         {
-            get { return _dataModel; }
-            set { _dataModel = value; }
-        }
-
-        private Chart _chart;
-
-        public Chart Chart
-        {
-            get { return _chart; }
-            set { _chart = value; }
+            get { return _plantViewModels; }
+            set { _plantViewModels = value; }
         }
 
 
-        public MainViewModel(IAppInfoService appInfoService, IDataService dataService, ChartService chartService)
+
+
+        public ICommand GetPlantsCmd { get; set; }
+
+        public MainViewModel(ISignalRService signalRService, IDatabaseService databaseService)
         {
-            DataModel = new DataModel { Data = "This is Data" };
+            _databaseService = databaseService;
+            _signalRService = signalRService;
 
+            _plantViewModels = new ObservableCollection<PlantViewModel>();
 
-            // chart test
-            var list = new List<Measurement>()
+            GetPlantsCmd = new Command(async () => await GetPlants());
+        }
+
+        public async Task GetPlants()
+        {
+            try
             {
-                new Measurement
-                {
-                    MeasurementId = 1,
-                    AirTemerature = 11.11F,
-                },
-                new Measurement
-                {
-                    MeasurementId = 2,
-                    AirTemerature = 21.11F,
-                }
-            };
-            
-            var chart = chartService.CreateChart<Measurement>(
-                list,
-                value: (m) => m.AirTemerature,
-                label: (m) => m.MeasurementId.ToString()
-            );
+                var res = await _databaseService.GetAsync<Plant>();
 
-            Chart = chart;
+                if (res.IsSuccessStatusCode)
+                {
+                    var plants = await res.ContentToCollectionAsync<Plant>();
+                    plants.ToList().ForEach(plant => PlantViewModels.Add(new PlantViewModel { Plant = plant }));
+                    await Application.Current.MainPage.DisplayAlert("Alert", $"{res.StatusCode}", "Cancel", "ok");
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {res.StatusCode}", "Cancel", "ok");
+                }
+            }
+            catch(Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {ex.Message}", "Cancel", "ok");
+                await (Application.Current.MainPage as NavigationPage).PushAsync(new ConnectionView());
+            }
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+    //// chart test
+    //var list = new List<Measurement>()
+    //{
+    //    new Measurement
+    //    {
+    //        MeasurementId = 1,
+    //        AirTemerature = 11.11F,
+    //    },
+    //    new Measurement
+    //    {
+    //        MeasurementId = 2,
+    //        AirTemerature = 21.11F,
+    //    }
+    //};
+
+    //var chart = chartService.CreateChart<Measurement>(
+    //    list,
+    //    value: (m) => m.AirTemerature,
+    //    label: (m) => m.MeasurementId.ToString()
+    //);
+
+    //Chart = chart;
 }

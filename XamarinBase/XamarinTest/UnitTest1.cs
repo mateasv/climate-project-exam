@@ -1,17 +1,9 @@
 using Xunit;
-using XamarinBase;
 using XamarinBase.Exstensions;
 using System.Net.Http;
-using Moq;
 using Server.Models;
 using System.Threading.Tasks;
-using System.IO;
-using System.Net;
-using System.Net.Http.Json;
 using XamarinBase.Services;
-using Microsoft.Net.Http.Client;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace XamarinTest
 {

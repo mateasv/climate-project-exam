@@ -1,15 +1,22 @@
-﻿using Newtonsoft.Json;
+﻿using Android.Net;
+using Javax.Net.Ssl;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Android.Net;
+using Xamarin.Forms;
 using XamarinBase.Exstensions;
 
 namespace XamarinBase.Services
 {
-    public class DatabaseService
+
+
+    public class DatabaseService : IDatabaseService
     {
+
         private string _APIUrl;
 
         public string APIUrl
@@ -18,13 +25,22 @@ namespace XamarinBase.Services
             set { _APIUrl = value; }
         }
 
-
         public HttpClient HttpClient { get; set; }
 
         public DatabaseService()
         {
-            HttpClient = new HttpClient();
-            APIUrl = "https://localhost:7189/api";
+            APIUrl = "https://10.0.2.2:7189/api";
+            Build();
+        }
+
+        public void Build()
+        {
+            /* To enable timeout, link: 
+             * https://tousu.in/qa/?qa=550162/
+             * https://stackoverflow.com/questions/28629989/ignore-ssl-certificate-errors-in-xamarin-forms-pcl/54318410#54318410
+             */
+            HttpClient = new HttpClient(DependencyService.Get<IHTTPClientHandlerCreationService>().GetInsecureHandler());
+            HttpClient.Timeout = TimeSpan.FromSeconds(5);
         }
 
         public async Task<HttpResponseMessage> GetAsync<T>()
@@ -55,7 +71,7 @@ namespace XamarinBase.Services
         public async Task<HttpResponseMessage> PostAsync<T>(T obj)
         {
             var endPointUrl = $"{APIUrl}/{typeof(T).Name}s";
-            
+
             var response = await PostAsync(endPointUrl, obj);
 
             return response;
@@ -74,7 +90,7 @@ namespace XamarinBase.Services
         {
             var endPointUrl = $"{APIUrl}/{typeof(T).Name}s/{id}";
 
-            var response = await PutAsync(endPointUrl,obj);
+            var response = await PutAsync(endPointUrl, obj);
 
             return response;
         }
@@ -92,7 +108,7 @@ namespace XamarinBase.Services
         {
             var endPointUrl = $"{APIUrl}/{typeof(T).Name}s/{id}";
 
-            var response = await DeleteAsync(endPointUrl,id);
+            var response = await DeleteAsync(endPointUrl, id);
 
             return response;
         }

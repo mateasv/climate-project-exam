@@ -8,7 +8,7 @@ using XamarinBase.EventArguments;
 
 namespace XamarinBase.Services
 {
-    public class SignalRService
+    public class SignalRService : ISignalRService
     {
         public event EventHandler<WarningEventArgs> OnReceiveWarning;
         public event EventHandler<ConnectionEventArgs> OnConnectSuccess;
@@ -29,7 +29,7 @@ namespace XamarinBase.Services
 
         public SignalRService()
         {
-            ConnectionUrl = "https://localhost:7189/TreeHub";
+            ConnectionUrl = "https://10.0.2.2:7189/TreeHub";
         }
 
         public void Build()
