@@ -22,10 +22,11 @@ namespace XamarinBase
             SetupServices(addPlatformServices);
 
             var navigationPage = new NavigationPage();
-            navigationPage.PushAsync(new MainPage());
+            navigationPage.PushAsync(new BarcodeView());
 
             //MainPage = navigationPage;
-            MainPage = new CameraView();
+            //MainPage = new CameraView();
+            MainPage = navigationPage;
         }
 
         void SetupServices(Action<IServiceCollection> addPlatformServices = null)

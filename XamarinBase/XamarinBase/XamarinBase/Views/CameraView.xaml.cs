@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -32,6 +34,15 @@ namespace XamarinBase.Views
             try
             {
                 var photo = await MediaPicker.CapturePhotoAsync();
+                var client = new HttpClient();
+                
+                client.BaseAddress = new Uri("10.176.160.179:5189");
+
+                var content = new StreamContent(await photo.OpenReadAsync());
+
+                HttpResponseMessage response = await client.PostAsync("/foo/login", content);
+
+                
                 await LoadPhotoAsync(photo);
                 Console.WriteLine($"CapturePhotoAsync COMPLETED: {PhotoPath}");
             }
