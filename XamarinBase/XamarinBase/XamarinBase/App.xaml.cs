@@ -45,6 +45,7 @@ namespace XamarinBase
             services.AddSingleton<IDatabaseService,DatabaseService>();
             services.AddSingleton<ISignalRService,SignalRService>();
             services.AddSingleton<IChartService,ChartService>();
+            services.AddSingleton(DependencyService.Get<IHTTPClientHandlerCreationService>());
 
             ServiceProvider = services.BuildServiceProvider();
         }

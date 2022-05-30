@@ -89,6 +89,8 @@ namespace Server.Models
 
                 entity.Property(e => e.PlantId).HasColumnName("plant_id");
 
+                entity.Property(e => e.Image).HasColumnName("image");
+
                 entity.Property(e => e.PlantTypeId).HasColumnName("plant_type_id");
 
                 entity.Property(e => e.Price).HasColumnName("price");

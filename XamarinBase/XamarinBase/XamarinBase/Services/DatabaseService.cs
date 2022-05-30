@@ -18,7 +18,7 @@ namespace XamarinBase.Services
     {
 
         private string _APIUrl;
-
+        private IHTTPClientHandlerCreationService _httpHandlerCreationService;
         public string APIUrl
         {
             get { return _APIUrl; }
@@ -27,20 +27,37 @@ namespace XamarinBase.Services
 
         public HttpClient HttpClient { get; set; }
 
-        public DatabaseService()
+        public DatabaseService(IHTTPClientHandlerCreationService clienthandler = null)
         {
-            APIUrl = "https://10.0.2.2:7189/api";
+            
+            _httpHandlerCreationService = clienthandler;
+
             Build();
         }
-
         public void Build()
         {
             /* To enable timeout, link: 
              * https://tousu.in/qa/?qa=550162/
              * https://stackoverflow.com/questions/28629989/ignore-ssl-certificate-errors-in-xamarin-forms-pcl/54318410#54318410
              */
-            HttpClient = new HttpClient(DependencyService.Get<IHTTPClientHandlerCreationService>().GetInsecureHandler());
-            HttpClient.Timeout = TimeSpan.FromSeconds(5);
+
+            if(_httpHandlerCreationService == null)
+            {
+                var httpClientHandler = new HttpClientHandler();
+                httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+
+                HttpClient = new HttpClient(httpClientHandler);
+
+                APIUrl = "https://localhost:7189/api";
+            }
+            else
+            {
+                HttpClient = new HttpClient(_httpHandlerCreationService.GetInsecureHandler());
+
+                APIUrl = "https://10.0.2.2:7189/api";
+            }
+
+            HttpClient.Timeout = TimeSpan.FromSeconds(15);
         }
 
         public async Task<HttpResponseMessage> GetAsync<T>()
