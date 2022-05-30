@@ -24,8 +24,8 @@ namespace XamarinBase
             var navigationPage = new NavigationPage();
             navigationPage.PushAsync(new MainPage());
 
-            //MainPage = navigationPage;
-            MainPage = new CameraView();
+            MainPage = navigationPage;
+            //MainPage = new CameraView();
         }
 
         void SetupServices(Action<IServiceCollection> addPlatformServices = null)
@@ -43,6 +43,7 @@ namespace XamarinBase
             services.AddSingleton<IDatabaseService,DatabaseService>();
             services.AddSingleton<ISignalRService,SignalRService>();
             services.AddSingleton<IChartService,ChartService>();
+            services.AddSingleton(DependencyService.Get<IHTTPClientHandlerCreationService>());
 
             ServiceProvider = services.BuildServiceProvider();
         }

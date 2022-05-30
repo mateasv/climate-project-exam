@@ -4,11 +4,68 @@ using System.Net.Http;
 using Server.Models;
 using System.Threading.Tasks;
 using XamarinBase.Services;
+using System.IO;
+using System;
+using System.Text;
+using Xamarin.Forms;
 
 namespace XamarinTest
 {
     public class UnitTest1
     {
+        [Fact]
+        public async Task Dbtest_GetPlant()
+        {
+            // arrange
+            var db = new DatabaseService();
+
+            // act
+
+            var res = await db.GetAsync<Plant>(2);
+            var t = await res.ContentToObjectAsync<Plant>();
+
+            // assert
+
+            Assert.NotNull(t);
+        }
+
+        [Fact]
+        public async Task DbTest()
+        {
+            // arrange
+            var db = new DatabaseService();
+            db.APIUrl = "https://localhost:7189/api";
+            db.Build();
+
+            byte[] img;
+
+            using (FileStream fs = File.Open(@"C:\Users\Lenovo\Desktop\xp.jpg", FileMode.Open))
+            {
+               
+                var ms = new MemoryStream();
+                fs.CopyTo(ms);
+                img = ms.ToArray();
+            }
+
+            var tree = new Plant()
+            {
+                PlantTypeId = 1,
+                Price = 22.22F,
+                WarrantyStartDate = null,
+                Image = img
+            };
+
+            // act
+
+            var res = await db.PostAsync<Plant>(tree);
+            var t = await res.ContentToObjectAsync<Plant>();
+
+            // assert
+
+            Assert.NotNull(t);
+        }
+
+
 
         [Fact]
         public async Task CreateChart_should_return_nonempty_collection()
