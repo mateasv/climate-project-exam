@@ -23,7 +23,7 @@ namespace XamarinBase
 
             var navigationPage = new NavigationPage();
             //navigationPage.PushAsync(new BarcodeView());
-            navigationPage.PushAsync(new PlantView());
+            navigationPage.PushAsync(new MainPage());
 
             //MainPage = navigationPage;
             //MainPage = new CameraView();
