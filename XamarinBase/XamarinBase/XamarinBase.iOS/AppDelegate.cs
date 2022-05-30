@@ -17,7 +17,7 @@ namespace XamarinBase.iOS
     {
         static void AddServices(IServiceCollection services)
         {
-            services.AddSingleton<IAppInfoService, AppInfoService>();
+            //services.AddSingleton<IAppInfoService, AppInfoService>();
         }
 
         //

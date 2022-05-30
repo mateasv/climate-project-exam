@@ -24,7 +24,8 @@ namespace XamarinBase
             var navigationPage = new NavigationPage();
             navigationPage.PushAsync(new MainPage());
 
-            MainPage = navigationPage;
+            //MainPage = navigationPage;
+            MainPage = new CameraView();
         }
 
         void SetupServices(Action<IServiceCollection> addPlatformServices = null)
