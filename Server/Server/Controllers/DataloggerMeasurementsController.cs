@@ -12,19 +12,21 @@ namespace Server.Controllers
     public class DataloggerMeasurementsController : ControllerBase
     {
         private readonly MeasurementsController _measurementsController;
+        private readonly DataloggersController _dataloggersController;
         private readonly IHubContext<TreeHub,ITreeHubClient> _hubContext;
         private readonly TreeDBContext _context;
         private readonly IMapper _mapper;
 
 
-        public DataloggerMeasurementsController(
-            MeasurementsController measurementsController,
-            TreeDBContext context,
-            IHubContext<TreeHub,ITreeHubClient> hubContext,
-            IMapper mapper
+        public DataloggerMeasurementsController(MeasurementsController measurementsController, 
+            DataloggersController dataloggersController, 
+            IHubContext<TreeHub, 
+            ITreeHubClient> hubContext,
+            TreeDBContext context,IMapper mapper
         )
         {
             _measurementsController = measurementsController;
+            _dataloggersController = dataloggersController;
             _hubContext = hubContext;
             _context = context;
             _mapper = mapper;
@@ -37,14 +39,19 @@ namespace Server.Controllers
             return await _measurementsController.GetMeasurement(id);
         }
 
+        
+
         // POST: api/DataloggerMeasurements
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<MeasurementDto>> PostMeasurement(Measurement measurement)
         {
-            var datalogger = await _context.Dataloggers.FindAsync(measurement.DataloggerId);
+            var result = await _dataloggersController.GetDatalogger(measurement.DataloggerId.GetValueOrDefault());
 
-            if (datalogger == null) return NotFound($"Datalogger not found");
+            if (result.Result is NotFoundResult) return NotFound($"Datalogger not found for id: {measurement.DataloggerId}");
+            if (result.Value is null) return NotFound($"Datalogger is null");
+
+            var datalogger = result.Value;
 
             await _context.Measurements.AddAsync(measurement);
             await _context.SaveChangesAsync();

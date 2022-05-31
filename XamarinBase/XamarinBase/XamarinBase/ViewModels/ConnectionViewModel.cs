@@ -50,8 +50,6 @@ namespace XamarinBase.ViewModels
         {
             _databaseService.APIUrl = DatabaseUrl;
             _databaseService.Build();
-            await (Application.Current.MainPage as NavigationPage).PopAsync();
-
         }
     }
 }

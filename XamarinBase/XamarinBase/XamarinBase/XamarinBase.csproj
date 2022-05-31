@@ -36,6 +36,9 @@
     <EmbeddedResource Update="Views\ConnectionView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Views\PlantsView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Remove="Resources\**" />
   </ItemGroup>
 
@@ -50,9 +53,6 @@
   <ItemGroup>
     <Compile Update="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\PlantDetailsView.xaml.cs">
-      <DependentUpon>PlantDetailsView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

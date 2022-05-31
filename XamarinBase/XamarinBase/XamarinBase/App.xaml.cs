@@ -38,9 +38,10 @@ namespace XamarinBase
             addPlatformServices?.Invoke(services);
 
             // Add ViewModels
-            services.AddTransient<MainViewModel>();
-            services.AddTransient<ConnectionViewModel>();
-            services.AddTransient<PlantDetailsViewModel>();
+            services.AddSingleton<MainViewModel>();
+            services.AddSingleton<ConnectionViewModel>();
+            services.AddSingleton<PlantDetailsViewModel>();
+            services.AddSingleton<PlantsViewModel>();
 
             // Add core services
             services.AddSingleton<IDatabaseService,DatabaseService>();

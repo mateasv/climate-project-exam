@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="XamarinBase.Views.ConnectionView">
-    <ContentPage.Content>
+    <ContentView.Content>
         <StackLayout>
             <Label Text="Database URL"></Label>
             <Entry Text="{Binding DatabaseUrl,Mode=TwoWay}"></Entry>
@@ -10,5 +10,5 @@
             <Entry Text="{Binding SignalRUrl,Mode=TwoWay}"></Entry>
             <Button Text="Confirm" Command="{Binding ConfirmCmd}"></Button>
         </StackLayout>
-    </ContentPage.Content>
-</ContentPage>
+    </ContentView.Content>
+</ContentView>

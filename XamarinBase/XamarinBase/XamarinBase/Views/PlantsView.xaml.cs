@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using XamarinBase.ViewModels;
@@ -10,12 +11,12 @@ using XamarinBase.ViewModels;
 namespace XamarinBase.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ConnectionView : ContentView
+    public partial class PlantsView : ContentView
     {
-        public ConnectionView()
+        public PlantsView()
         {
             InitializeComponent();
-            BindingContext = App.GetViewModel<ConnectionViewModel>();
+            BindingContext = App.GetViewModel<PlantsViewModel>();
         }
     }
 }

@@ -21,61 +21,40 @@ namespace XamarinBase.ViewModels
         private readonly ISignalRService _signalRService;
         private readonly IDatabaseService _databaseService;
 
-        private ObservableCollection<PlantViewModel> _plantViewModels;
+        
 
-        public ObservableCollection<PlantViewModel> PlantViewModels
+        private ContentView _currentContentView;
+
+
+        public ContentView CurrentContentView
         {
-            get { return _plantViewModels; }
-            set { _plantViewModels = value; }
+            get { return _currentContentView; }
+            set { _currentContentView = value; OnPropertyChanged(); }
         }
 
 
-
-
-        public ICommand GetPlantsCmd { get; set; }
-        public ICommand ViewPlantDetailsCmd { get; set; }
+        public ICommand PlantsViewCmd { get; set; }
+        public ICommand ConnectionViewCmd { get; set; }
 
         public MainViewModel(ISignalRService signalRService, IDatabaseService databaseService)
         {
             _databaseService = databaseService;
             _signalRService = signalRService;
 
-            _plantViewModels = new ObservableCollection<PlantViewModel>();
+            PlantsViewCmd = new Command(async () => await PlantsView());
+            ConnectionViewCmd = new Command(async () => await ConnectionView());
 
-            GetPlantsCmd = new Command(async () => await GetPlants());
-            ViewPlantDetailsCmd = new Command(async (plantViewModel) => await ViewPlantDetails(plantViewModel));
+            CurrentContentView = new PlantsView();
+        }
+        public async Task ConnectionView()
+        {
+            CurrentContentView = new ConnectionView();
         }
 
-        public async Task GetPlants()
+
+        public async Task PlantsView()
         {
-            try
-            {
-                var res = await _databaseService.GetAsync<Plant>();
-
-                if (res.IsSuccessStatusCode)
-                {
-                    var plants = await res.ContentToCollectionAsync<Plant>();
-
-                    PlantViewModels.Clear();
-
-                    plants.ToList().ForEach(plant => PlantViewModels.Add(new PlantViewModel { Plant = plant }));
-                    await Application.Current.MainPage.DisplayAlert("Alert", $"{res.StatusCode}", "Cancel", "ok");
-                }
-                else
-                {
-                    await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {res.StatusCode}", "Cancel", "ok");
-                }
-            }
-            catch(Exception ex)
-            {
-                await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {ex.Message}", "Cancel", "ok");
-                await (Application.Current.MainPage as NavigationPage).PushAsync(new ConnectionView());
-            }
-        }
-
-        public async Task ViewPlantDetails(object obj)
-        {
-            await (Application.Current.MainPage as NavigationPage).PushAsync(new PlantDetailsView());
+            CurrentContentView = new PlantsView();
         }
     }
 
