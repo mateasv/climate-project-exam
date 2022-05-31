@@ -1,3 +1,5 @@
+CREATE DATABASE TreeDB
+GO
 USE [TreeDB]
 GO
 /****** Object:  Table [dbo].[datalogger]    Script Date: 26-05-2022 16:46:13 ******/
@@ -86,4 +88,10 @@ ALTER TABLE [dbo].[plant]  WITH CHECK ADD  CONSTRAINT [FK_plant_plant_type] FORE
 REFERENCES [dbo].[plant_type] ([plant_type_id])
 GO
 ALTER TABLE [dbo].[plant] CHECK CONSTRAINT [FK_plant_plant_type]
+GO
+INSERT INTO [dbo].[plant_type] (plant_type_name) VALUES ('Cyperus papyrus'), ('Olea Nordic')
+GO
+INSERT INTO [dbo].[plant] (plant_type_id, warranty_start_date, price) VALUES (1, NULL, 5000), (2, NULL, 72500)
+GO
+INSERT INTO [dbo].[datalogger] (plant_id, min_air_humidity, max__air_humidity, min_air_temperature, max_air_temperature) VALUES (1, 35, 45, 20, 25), (2, 30, 40, 24, 28)
 GO
