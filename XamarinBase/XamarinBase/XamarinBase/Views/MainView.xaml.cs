@@ -9,9 +9,9 @@ using XamarinBase.ViewModels;
 
 namespace XamarinBase
 {
-    public partial class MainPage : ContentPage
+    public partial class MainView : ContentPage
     {
-        public MainPage()
+        public MainView()
         {
             InitializeComponent();
             BindingContext = App.GetViewModel<MainViewModel>();

@@ -46,4 +46,13 @@
   <ItemGroup>
     <None Remove="Resources\**" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\PlantDetailsView.xaml.cs">
+      <DependentUpon>PlantDetailsView.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

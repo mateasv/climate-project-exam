@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="XamarinBase.MainView"
+             xmlns:vm="clr-namespace:XamarinBase.ViewModels">
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior EventName="Appearing" Command="{Binding GetPlantsCmd}"></xct:EventToCommandBehavior>
+    </ContentPage.Behaviors>
+
+    <Grid RowDefinitions="*,50" ColumnDefinitions="*,50">
+        <Button Text="+" Grid.Row="1" Grid.Column="1"></Button>
+
+        <StackLayout Grid.ColumnSpan="2" Grid.RowSpan="2">
+            <Label Text="Overview of Plants" HorizontalTextAlignment="Center"></Label>
+            <Button Text="Refresh" Command="{Binding GetPlantsCmd}"></Button>
+
+            <ScrollView>
+                <StackLayout BindableLayout.ItemsSource="{Binding PlantViewModels}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Grid RowDefinitions="Auto,Auto,Auto">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding ViewPlantDetailsCmd,Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}}"
+                                        CommandParameter="{Binding}"
+                                        ></TapGestureRecognizer>
+                                </Grid.GestureRecognizers>
+                                <Label Grid.Row="0" Text="{Binding Plant.PlantId,StringFormat='Tree: {0}'}"></Label>
+                                <Image Grid.Row="1" Source="{Binding Image}"></Image>
+                                <Rectangle Grid.Row="2" HeightRequest="2" Fill="Black"></Rectangle>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+            </ScrollView>
+        </StackLayout>
+    </Grid>
+
+    
+</ContentPage>

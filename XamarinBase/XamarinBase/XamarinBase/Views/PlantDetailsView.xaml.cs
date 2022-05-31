@@ -11,9 +11,9 @@ using Xamarin.Forms.Xaml;
 namespace XamarinBase.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class PlantView : ContentPage
+    public partial class PlantDetailsView : ContentPage
     {
-        public PlantView()
+        public PlantDetailsView()
         {
             InitializeComponent();
 
