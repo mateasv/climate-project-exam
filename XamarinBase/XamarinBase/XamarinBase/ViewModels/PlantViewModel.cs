@@ -19,7 +19,14 @@ namespace XamarinBase.ViewModels
             {
                 if(_image == null)
                 {
-                    _image = ImageSource.FromStream(() => new MemoryStream(Plant?.Image));
+                    if(Plant.Image == null)
+                    {
+                        _image = ImageSource.FromFile("icon.png");
+                    }
+                    else
+                    {
+                        _image = ImageSource.FromStream(() => new MemoryStream(Plant?.Image));
+                    }
                 }
                 return _image;
             }

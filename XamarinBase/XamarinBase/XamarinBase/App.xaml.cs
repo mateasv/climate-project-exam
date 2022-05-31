@@ -23,7 +23,7 @@ namespace XamarinBase
 
             var navigationPage = new NavigationPage();
             //navigationPage.PushAsync(new BarcodeView());
-            navigationPage.PushAsync(new MainPage());
+            navigationPage.PushAsync(new MainView());
 
             //MainPage = navigationPage;
             //MainPage = new CameraView();
@@ -40,6 +40,7 @@ namespace XamarinBase
             // Add ViewModels
             services.AddTransient<MainViewModel>();
             services.AddTransient<ConnectionViewModel>();
+            services.AddTransient<PlantDetailsViewModel>();
 
             // Add core services
             services.AddSingleton<IDatabaseService,DatabaseService>();

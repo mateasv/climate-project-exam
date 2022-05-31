@@ -33,6 +33,7 @@ namespace XamarinBase.ViewModels
 
 
         public ICommand GetPlantsCmd { get; set; }
+        public ICommand ViewPlantDetailsCmd { get; set; }
 
         public MainViewModel(ISignalRService signalRService, IDatabaseService databaseService)
         {
@@ -42,6 +43,7 @@ namespace XamarinBase.ViewModels
             _plantViewModels = new ObservableCollection<PlantViewModel>();
 
             GetPlantsCmd = new Command(async () => await GetPlants());
+            ViewPlantDetailsCmd = new Command(async (plantViewModel) => await ViewPlantDetails(plantViewModel));
         }
 
         public async Task GetPlants()
@@ -53,6 +55,9 @@ namespace XamarinBase.ViewModels
                 if (res.IsSuccessStatusCode)
                 {
                     var plants = await res.ContentToCollectionAsync<Plant>();
+
+                    PlantViewModels.Clear();
+
                     plants.ToList().ForEach(plant => PlantViewModels.Add(new PlantViewModel { Plant = plant }));
                     await Application.Current.MainPage.DisplayAlert("Alert", $"{res.StatusCode}", "Cancel", "ok");
                 }
@@ -67,7 +72,14 @@ namespace XamarinBase.ViewModels
                 await (Application.Current.MainPage as NavigationPage).PushAsync(new ConnectionView());
             }
         }
+
+        public async Task ViewPlantDetails(object obj)
+        {
+            await (Application.Current.MainPage as NavigationPage).PushAsync(new PlantDetailsView());
+        }
     }
+
+    
 
 
 
