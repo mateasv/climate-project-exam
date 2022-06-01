@@ -9,6 +9,7 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using XamarinBase.Exstensions;
 using XamarinBase.Services;
+using XamarinBase.Views;
 
 namespace XamarinBase.ViewModels
 {
@@ -34,8 +35,8 @@ namespace XamarinBase.ViewModels
 
         public ICommand GetPlantsCmd { get; set; }
         public ICommand ViewPlantDetailsCmd { get; set; }
+        public ICommand CreatePlantCmd { get; set; }
 
-        
 
         public PlantsViewModel(ISignalRService signalRService, IDatabaseService databaseService)
         {
@@ -46,8 +47,19 @@ namespace XamarinBase.ViewModels
 
             GetPlantsCmd = new Command(async () => await GetPlants(), () => CanExecuteGetPlants);
             ViewPlantDetailsCmd = new Command(async (plantViewModel) => await ViewPlantDetails(plantViewModel));
+            CreatePlantCmd = new Command(async () => await CreatePlant());
+
 
             CanExecuteGetPlants = true;
+        }
+
+        public async Task CreatePlant()
+        {
+            await (Application.Current.MainPage as NavigationPage).PushAsync(new PlantDetailsView());
+
+            var plantDetailsViewModel = App.GetViewModel<PlantDetailsViewModel>() as PlantDetailsViewModel;
+
+            await plantDetailsViewModel.PlantDetails();
         }
 
         public async Task GetPlants()

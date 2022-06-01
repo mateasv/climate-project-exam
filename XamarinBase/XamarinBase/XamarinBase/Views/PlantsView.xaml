@@ -5,32 +5,32 @@
              xmlns:vm="clr-namespace:XamarinBase.ViewModels">
   <ContentView.Content>
         <Grid RowDefinitions="*,50" ColumnDefinitions="*,50">
-        <Button Text="+" Grid.Row="1" Grid.Column="1"></Button>
 
-        <StackLayout Grid.ColumnSpan="2" Grid.RowSpan="2">
-            <Label Text="Overview of Plants" HorizontalTextAlignment="Center"></Label>
-            <Button Text="Refresh" Command="{Binding GetPlantsCmd}"></Button>
+            <StackLayout Grid.ColumnSpan="2" Grid.RowSpan="2">
+                <Label Text="Overview of Plants" HorizontalTextAlignment="Center"></Label>
+                <Button Text="Refresh" Command="{Binding GetPlantsCmd}"></Button>
 
-            <ScrollView>
-                <StackLayout BindableLayout.ItemsSource="{Binding PlantViewModels}">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <Grid RowDefinitions="Auto,Auto,Auto">
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer 
-                                        Command="{Binding ViewPlantDetailsCmd,Source={RelativeSource AncestorType={x:Type vm:PlantsViewModel}}}"
-                                        CommandParameter="{Binding}"
-                                    ></TapGestureRecognizer>
-                                </Grid.GestureRecognizers>
-                                <Label Grid.Row="0" Text="{Binding Plant.PlantId,StringFormat='Tree: {0}'}"></Label>
-                                <Image Grid.Row="1" Source="{Binding Image}"></Image>
-                                <Rectangle Grid.Row="2" HeightRequest="2" Fill="Black"></Rectangle>
-                            </Grid>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </StackLayout>
-            </ScrollView>
-        </StackLayout>
-    </Grid>
+                <ScrollView>
+                    <StackLayout BindableLayout.ItemsSource="{Binding PlantViewModels}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid RowDefinitions="Auto,Auto,Auto">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding ViewPlantDetailsCmd,Source={RelativeSource AncestorType={x:Type vm:PlantsViewModel}}}"
+                                            CommandParameter="{Binding}"
+                                        ></TapGestureRecognizer>
+                                    </Grid.GestureRecognizers>
+                                    <Label Grid.Row="0" Text="{Binding Plant.PlantId,StringFormat='Tree: {0}'}"></Label>
+                                    <Image Grid.Row="1" Source="{Binding Image}"></Image>
+                                    <Rectangle Grid.Row="2" HeightRequest="2" Fill="Black"></Rectangle>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+            </StackLayout>
+            <Button  Text="+" Grid.Row="1" Grid.Column="1" Command="{Binding CreatePlantCmd}"></Button>
+        </Grid>
     </ContentView.Content>
 </ContentView>

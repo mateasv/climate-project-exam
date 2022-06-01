@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Server.Models;
 using System;
 using Xamarin.Forms;
 using XamarinBase.Services;
 using XamarinBase.ViewModels;
 using XamarinBase.Views;
 using ZXing.Net.Mobile.Forms;
+using XamarinBase.Exstensions;
+using System.Linq;
 
 namespace XamarinBase
 {
@@ -42,11 +45,13 @@ namespace XamarinBase
             services.AddSingleton<ConnectionViewModel>();
             services.AddSingleton<PlantDetailsViewModel>();
             services.AddSingleton<PlantsViewModel>();
+            services.AddSingleton<EditPlantViewModel>();
 
             // Add core services
             services.AddSingleton<IDatabaseService,DatabaseService>();
             services.AddSingleton<ISignalRService,SignalRService>();
             services.AddSingleton<IChartService,ChartService>();
+            services.AddSingleton<ICameraService, CameraService>();
             services.AddSingleton(DependencyService.Get<IHTTPClientHandlerCreationService>());
 
             ServiceProvider = services.BuildServiceProvider();

@@ -33,6 +33,7 @@ namespace XamarinBase.ViewModels
             set
             {
                 _image = value;
+                OnPropertyChanged();
             }
         
         }

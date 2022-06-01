@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinBase.Views.EditPlantView">
+    <ContentView.Content>
+        <StackLayout>
+            <Label Text="Plant Id"></Label>
+            <Entry Text="{Binding PlantViewModel.Plant.PlantId}" IsEnabled="False"></Entry>
+            <Label Text="Plant Type"></Label>
+            <Picker ItemsSource="{Binding PlantTypeViewModels}" 
+                    ItemDisplayBinding="{Binding PlantType.PlantTypeName}"
+                    SelectedItem="{Binding SelectedPlantTypeViewModel,Mode=TwoWay}"></Picker>
+            <Label Text="Price"></Label>
+            <Entry Text="{Binding PlantViewModel.Plant.Price}"></Entry>
+            <Label Text="Image"></Label>
+            <Image Source="{Binding PlantViewModel.Image}"></Image>
+            <Label Text="Path"></Label>
+            <Button Text="Take Photo" Command="{Binding TakePhotoCmd}"></Button>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

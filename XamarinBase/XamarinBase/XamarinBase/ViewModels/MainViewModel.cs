@@ -35,6 +35,8 @@ namespace XamarinBase.ViewModels
 
         public ICommand PlantsViewCmd { get; set; }
         public ICommand ConnectionViewCmd { get; set; }
+        
+
 
         public MainViewModel(ISignalRService signalRService, IDatabaseService databaseService)
         {
@@ -44,7 +46,12 @@ namespace XamarinBase.ViewModels
             PlantsViewCmd = new Command(async () => await PlantsView());
             ConnectionViewCmd = new Command(async () => await ConnectionView());
 
+
             CurrentContentView = new PlantsView();
+        }
+        public async Task CreatePlant()
+        {
+            await (App.Current.MainPage as NavigationPage).PushAsync(new PlantDetailsView());
         }
         public async Task ConnectionView()
         {
