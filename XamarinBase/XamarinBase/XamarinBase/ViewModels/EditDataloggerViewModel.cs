@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Server.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +39,7 @@ namespace XamarinBase.ViewModels
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     await (Application.Current.MainPage as NavigationPage).PopAsync();
+                    DataloggerViewModel = new DataloggerViewModel() { Datalogger = new Datalogger() };
                     DataloggerViewModel.DataloggerId = int.Parse(result.Text);
                 });
             });
