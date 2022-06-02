@@ -5,19 +5,19 @@
     <ContentView.Content>
         <StackLayout>
             <Label Text="Datalogger Id"></Label>
-            <Entry Text="{Binding DataloggerViewModel.DataloggerId}" IsEnabled="False" ></Entry>
+            <Entry Text="{Binding DataloggerViewModel.Datalogger.DataloggerId}" IsEnabled="False" ></Entry>
 
             <Label Text="MinAirHumidity"></Label>
-            <Entry Text="{Binding DataloggerViewModel.MaxAirHumidity}"></Entry>
+            <Entry Text="{Binding DataloggerViewModel.Datalogger.MaxAirHumidity, Mode=TwoWay}"></Entry>
 
             <Label Text="MaxAirHumidity"></Label>
-            <Entry Text="{Binding DataloggerViewModel.MinAirHumidity}"></Entry>
+            <Entry Text="{Binding DataloggerViewModel.Datalogger.MinAirHumidity,Mode=TwoWay}"></Entry>
 
             <Label Text="MinAirTemperature"></Label>
-            <Entry Text="{Binding DataloggerViewModel.MinAirTemperature}"></Entry>
+            <Entry Text="{Binding DataloggerViewModel.Datalogger.MinAirTemperature,Mode=TwoWay}"></Entry>
 
             <Label Text="MaxAirTemperature"></Label>
-            <Entry Text="{Binding DataloggerViewModel.MaxAirTemperature}"></Entry>
+            <Entry Text="{Binding DataloggerViewModel.Datalogger.MaxAirTemperature,Mode=TwoWay}"></Entry>
 
             <Button Text="Scan Datalogger" Command="{Binding ScanDataloggerCmd}"></Button>
         </StackLayout>

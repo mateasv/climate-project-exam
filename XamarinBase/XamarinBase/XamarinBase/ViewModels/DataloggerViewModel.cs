@@ -7,16 +7,14 @@ namespace XamarinBase.ViewModels
 {
     public class DataloggerViewModel : BaseViewModel
     {
-        private int _dataloggerId;
+        private Datalogger _datalogger;
 
-        public int DataloggerId
+        public Datalogger Datalogger
         {
-            get { return _dataloggerId; }
-            set { _dataloggerId = value; OnPropertyChanged(); }
+            get { return _datalogger; }
+            set { _datalogger = value; OnPropertyChanged(); }
         }
 
-
-        public Datalogger Datalogger { get; set; }
 
 
     }

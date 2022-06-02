@@ -17,7 +17,7 @@
 
             <Label Text="Warranty Start Date"></Label>
             <DatePicker MinimumDate="{Binding MinDate}" 
-                        MaximumDate="{Binding MaxDate}" 
+                        MaximumDate="{Binding MaxDate}"
                         Date="{Binding PlantViewModel.Plant.WarrantyStartDate, Mode=TwoWay}"></DatePicker>
             
             <Label Text="Image"></Label>

@@ -70,14 +70,16 @@ namespace XamarinBase.ViewModels
             set { _plantTypeViewModels = value; }
         }
 
-        public ICommand GetPlantTypesCmd { get; set; }
-        public ICommand TakePhotoCmd { get; set; }
-
         public PlantViewModel PlantViewModel
         {
             get { return _plantViewModel; }
             set { _plantViewModel = value; OnPropertyChanged(); }
         }
+
+        public ICommand GetPlantTypesCmd { get; set; }
+        public ICommand TakePhotoCmd { get; set; }
+
+        
 
         
         public EditPlantViewModel(IDatabaseService databaseService)
