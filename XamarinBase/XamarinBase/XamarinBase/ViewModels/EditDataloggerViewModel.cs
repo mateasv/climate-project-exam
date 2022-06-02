@@ -32,15 +32,15 @@ namespace XamarinBase.ViewModels
             var scan = new ZXingScannerPage();
             await (Application.Current.MainPage as NavigationPage).PushAsync(scan);
 
-            scan.OnScanResult += async (result) => await InitDatalogger(result);
-            //scan.OnScanResult += (async result => 
-            //{
-            //    Device.BeginInvokeOnMainThread(async () =>
-            //    {
-            //        await (Application.Current.MainPage as NavigationPage).PopAsync();
-            //        //barcodeLabel.Text = $"Scanned Barcode: {result.Text}";
-            //    });
-            //});
+            //scan.OnScanResult += async (result) => await InitDatalogger(result);
+            scan.OnScanResult += (async result =>
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await (Application.Current.MainPage as NavigationPage).PopAsync();
+                    DataloggerViewModel.DataloggerId = int.Parse(result.Text);
+                });
+            });
         }
 
 
