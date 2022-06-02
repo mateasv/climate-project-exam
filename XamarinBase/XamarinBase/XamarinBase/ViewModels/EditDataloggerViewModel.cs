@@ -46,13 +46,17 @@ namespace XamarinBase.ViewModels
 
         private async Task InitDatalogger(ZXing.Result result)
         {
-
-            if (int.TryParse(result.Text, out int dataloggerId))
+            Device.BeginInvokeOnMainThread(async () =>
             {
-                DataloggerViewModel.DataloggerId = dataloggerId;
-            }
+                if (int.TryParse(result.Text, out int dataloggerId))
+                {
+                    DataloggerViewModel.DataloggerId = dataloggerId;
+                }
 
-            await (Application.Current.MainPage as NavigationPage).PopAsync();
+                await (Application.Current.MainPage as NavigationPage).PopAsync();
+            });
+
+            
         }
     }
 }
