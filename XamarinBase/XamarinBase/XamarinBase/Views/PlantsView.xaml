@@ -22,7 +22,9 @@
                                         ></TapGestureRecognizer>
                                     </Grid.GestureRecognizers>
                                     <Label Grid.Row="0" Text="{Binding Plant.PlantId,StringFormat='Tree: {0}'}"></Label>
-                                    <Image Grid.Row="1" Source="{Binding Image}"></Image>
+                                    <Grid HeightRequest="150">
+                                        <Image Grid.Row="1" Source="{Binding Image}" Aspect="AspectFit"></Image>
+                                    </Grid>
                                     <Rectangle Grid.Row="2" HeightRequest="2" Fill="Black"></Rectangle>
                                 </Grid>
                             </DataTemplate>

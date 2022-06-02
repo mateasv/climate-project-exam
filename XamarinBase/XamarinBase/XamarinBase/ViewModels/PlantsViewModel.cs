@@ -58,8 +58,11 @@ namespace XamarinBase.ViewModels
             await (Application.Current.MainPage as NavigationPage).PushAsync(new PlantDetailsView());
 
             var plantDetailsViewModel = App.GetViewModel<PlantDetailsViewModel>() as PlantDetailsViewModel;
+            var editPlantViewModel = App.GetViewModel<EditPlantViewModel>() as EditPlantViewModel;
 
-            await plantDetailsViewModel.PlantDetails();
+            editPlantViewModel.Reset();
+            editPlantViewModel.GetPlantTypesCmd.Execute(this);
+            plantDetailsViewModel.PlantDetailsCmd.Execute(this);
         }
 
         public async Task GetPlants()

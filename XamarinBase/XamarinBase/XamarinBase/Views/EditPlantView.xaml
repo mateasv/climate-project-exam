@@ -6,15 +6,25 @@
         <StackLayout>
             <Label Text="Plant Id"></Label>
             <Entry Text="{Binding PlantViewModel.Plant.PlantId}" IsEnabled="False"></Entry>
+            
             <Label Text="Plant Type"></Label>
             <Picker ItemsSource="{Binding PlantTypeViewModels}" 
                     ItemDisplayBinding="{Binding PlantType.PlantTypeName}"
                     SelectedItem="{Binding SelectedPlantTypeViewModel,Mode=TwoWay}"></Picker>
+            
             <Label Text="Price"></Label>
             <Entry Text="{Binding PlantViewModel.Plant.Price}"></Entry>
+
+            <Label Text="Warranty Start Date"></Label>
+            <DatePicker MinimumDate="{Binding MinDate}" 
+                        MaximumDate="{Binding MaxDate}" 
+                        Date="{Binding PlantViewModel.Plant.WarrantyStartDate, Mode=TwoWay}"></DatePicker>
+            
             <Label Text="Image"></Label>
-            <Image Source="{Binding PlantViewModel.Image}"></Image>
-            <Label Text="Path"></Label>
+            <Grid HeightRequest="100">
+                <Image Source="{Binding PlantViewModel.Image}" Aspect="AspectFit"></Image>
+            </Grid>
+            <Label Text="{Binding PlantViewModel.PhotoPath, StringFormat='Path: {0}'}"></Label>
             <Button Text="Take Photo" Command="{Binding TakePhotoCmd}"></Button>
         </StackLayout>
     </ContentView.Content>

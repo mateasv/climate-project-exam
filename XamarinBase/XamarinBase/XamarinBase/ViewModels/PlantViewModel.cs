@@ -11,6 +11,15 @@ namespace XamarinBase.ViewModels
     {
         public Plant Plant { get; set; }
 
+        private string _photoPath;
+
+        public string PhotoPath
+        {
+            get { return _photoPath; }
+            set { _photoPath = value; OnPropertyChanged(); }
+        }
+
+
         private ImageSource _image;
 
         public ImageSource Image 

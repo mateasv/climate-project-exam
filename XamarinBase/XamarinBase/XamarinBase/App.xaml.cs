@@ -46,12 +46,12 @@ namespace XamarinBase
             services.AddSingleton<PlantDetailsViewModel>();
             services.AddSingleton<PlantsViewModel>();
             services.AddSingleton<EditPlantViewModel>();
+            services.AddSingleton<EditDataloggerViewModel>();
 
             // Add core services
             services.AddSingleton<IDatabaseService,DatabaseService>();
             services.AddSingleton<ISignalRService,SignalRService>();
             services.AddSingleton<IChartService,ChartService>();
-            services.AddSingleton<ICameraService, CameraService>();
             services.AddSingleton(DependencyService.Get<IHTTPClientHandlerCreationService>());
 
             ServiceProvider = services.BuildServiceProvider();

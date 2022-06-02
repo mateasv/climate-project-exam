@@ -30,15 +30,11 @@ namespace XamarinBase.ViewModels
         public async Task PlantDetails()
         {
             CurrentContentView = new EditPlantView();
-
-            var editPlantViewModel = App.GetViewModel<EditPlantViewModel>() as EditPlantViewModel;
-            editPlantViewModel.Reset();
-            await editPlantViewModel.GetPlantTypes();
         }
 
         public async Task DataloggerDetails()
         {
-            
+            CurrentContentView = new EditDataloggerView();
         }
 
     }

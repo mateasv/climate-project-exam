@@ -21,6 +21,30 @@ namespace XamarinBase.ViewModels
         private PlantViewModel _plantViewModel;
         private ObservableCollection<PlantTypeViewModel> _plantTypeViewModels;
         private PlantTypeViewModel _selectedPlantTypeViewModel;
+        private DateTime _minDate;
+        private DateTime _maxDate;
+        private DateTime _selectedDate;
+
+        public DateTime SelectedDate
+        {
+            get { return _selectedDate; }
+            set { _selectedDate = value; OnPropertyChanged(); }
+        }
+
+
+        public DateTime MaxDate
+        {
+            get { return _maxDate; }
+            set { _maxDate = value; OnPropertyChanged(); }
+        }
+
+
+        public DateTime MinDate
+        {
+            get { return _minDate; }
+            set { _minDate = value; OnPropertyChanged(); }
+        }
+
 
 
 
@@ -59,8 +83,8 @@ namespace XamarinBase.ViewModels
         public EditPlantViewModel(IDatabaseService databaseService)
         {
             _databaseService = databaseService;
-
-            _databaseService = databaseService;
+            MinDate = new DateTime(2022,1,1);
+            MaxDate = new DateTime(DateTime.Now.AddYears(4).Ticks);
 
             PlantTypeViewModels = new ObservableCollection<PlantTypeViewModel>();
 
@@ -74,7 +98,6 @@ namespace XamarinBase.ViewModels
 
             if (photo is null) return;
 
-
             using (var stream = await photo.OpenReadAsync())
             {
                 using (var ms = new MemoryStream())
@@ -85,6 +108,8 @@ namespace XamarinBase.ViewModels
                     PlantViewModel.Image = ImageSource.FromStream(() => new MemoryStream(PlantViewModel.Plant.Image));
                 }
             }
+
+            PlantViewModel.PhotoPath = Path.Combine(FileSystem.CacheDirectory, photo.FileName);
         }
 
         public async Task GetPlantTypes()
