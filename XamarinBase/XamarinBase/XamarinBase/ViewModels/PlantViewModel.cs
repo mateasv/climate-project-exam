@@ -1,6 +1,7 @@
 ﻿using Server.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text;
 using Xamarin.Forms;
@@ -11,7 +12,11 @@ namespace XamarinBase.ViewModels
     {
         public Plant Plant { get; set; }
 
+
         private string _photoPath;
+
+
+
 
         public string PhotoPath
         {

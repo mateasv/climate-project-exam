@@ -45,13 +45,6 @@ namespace Server.Models
                 entity.Property(e => e.MinAirHumidity).HasColumnName("min_air_humidity");
 
                 entity.Property(e => e.MinAirTemperature).HasColumnName("min_air_temperature");
-
-                entity.Property(e => e.PlantId).HasColumnName("plant_id");
-
-                entity.HasOne(d => d.Plant)
-                    .WithMany(p => p.Dataloggers)
-                    .HasForeignKey(d => d.PlantId)
-                    .HasConstraintName("FK_datalogger_plant");
             });
 
             modelBuilder.Entity<Measurement>(entity =>
@@ -66,9 +59,11 @@ namespace Server.Models
 
                 entity.Property(e => e.DataloggerId).HasColumnName("datalogger_id");
 
-                entity.Property(e => e.PlantId).HasColumnName("plant_id");
+                entity.Property(e => e.MeasurementDate)
+                    .HasColumnType("date")
+                    .HasColumnName("measurement_date");
 
-                entity.Property(e => e.SoilHumidity).HasColumnName("soil_humidity");
+                entity.Property(e => e.PlantId).HasColumnName("plant_id");
 
                 entity.Property(e => e.SoilIsDry).HasColumnName("soil_is_dry");
 
@@ -89,6 +84,8 @@ namespace Server.Models
 
                 entity.Property(e => e.PlantId).HasColumnName("plant_id");
 
+                entity.Property(e => e.DataloggerId).HasColumnName("datalogger_id");
+
                 entity.Property(e => e.Image).HasColumnName("image");
 
                 entity.Property(e => e.PlantTypeId).HasColumnName("plant_type_id");
@@ -98,6 +95,11 @@ namespace Server.Models
                 entity.Property(e => e.WarrantyStartDate)
                     .HasColumnType("date")
                     .HasColumnName("warranty_start_date");
+
+                entity.HasOne(d => d.Datalogger)
+                    .WithMany(p => p.Plants)
+                    .HasForeignKey(d => d.DataloggerId)
+                    .HasConstraintName("FK_plant_datalogger");
 
                 entity.HasOne(d => d.PlantType)
                     .WithMany(p => p.Plants)

@@ -25,6 +25,10 @@ namespace XamarinBase.ViewModels
         private DateTime _maxDate;
         private DateTime _selectedDate;
 
+        
+
+
+
         public DateTime SelectedDate
         {
             get { return _selectedDate; }
@@ -53,13 +57,13 @@ namespace XamarinBase.ViewModels
             get { return _selectedPlantTypeViewModel; }
             set 
             { 
-
                 _selectedPlantTypeViewModel = value;
 
-                if(SelectedPlantTypeViewModel != null)
+                if(value != null)
                 {
                     PlantViewModel.Plant.PlantTypeId = SelectedPlantTypeViewModel.PlantType.PlantTypeId;
                 }
+                OnPropertyChanged();
             }
         }
 
@@ -67,13 +71,20 @@ namespace XamarinBase.ViewModels
         public ObservableCollection<PlantTypeViewModel> PlantTypeViewModels
         {
             get { return _plantTypeViewModels; }
-            set { _plantTypeViewModels = value; }
+            set { _plantTypeViewModels = value; OnPropertyChanged(); }
         }
 
         public PlantViewModel PlantViewModel
         {
             get { return _plantViewModel; }
-            set { _plantViewModel = value; OnPropertyChanged(); }
+            set 
+            { 
+                _plantViewModel = value; 
+
+                SelectedPlantTypeViewModel = PlantTypeViewModels.FirstOrDefault(ptvm => ptvm.PlantType.PlantTypeId == PlantViewModel.Plant.PlantTypeId);
+
+                OnPropertyChanged(); 
+            }
         }
 
         public ICommand GetPlantTypesCmd { get; set; }
@@ -120,29 +131,30 @@ namespace XamarinBase.ViewModels
 
             try
             {
-                var response = await _databaseService.GetAsync<PlantType>();
+                var res = await _databaseService.GetAsync<PlantType>();
 
-                if (response.IsSuccessStatusCode)
+                if (!res.IsSuccessStatusCode)
                 {
-                    var plantTypes = await response.ContentToCollectionAsync<PlantType>();
+                    await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {res.StatusCode} Error getting plant types", "Ok", "Cancel");
+                    await (Application.Current.MainPage as NavigationPage).PopAsync();
+                    return;
+                }
 
-                    plantTypes.ToList().ForEach(pt => PlantTypeViewModels.Add(new PlantTypeViewModel { PlantType = pt }));
-                }
-                else
-                {
-                    await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {response.StatusCode}", "Cancel", "ok");
-                }
+                var plantTypes = await res.ContentToCollectionAsync<PlantType>();
+                plantTypes.ToList().ForEach(pt => PlantTypeViewModels.Add(new PlantTypeViewModel { PlantType = pt }));
+
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {ex.Message}", "Cancel", "ok");
+                await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error in getting plant types: {ex.Message}", "Ok", "Cancel");
             }
         }
 
         public void Reset()
         {
             PlantViewModel = new PlantViewModel() { Plant = new Plant() };
-            SelectedPlantTypeViewModel = null;
+            //SelectedPlantTypeViewModel = null;
+            SelectedPlantTypeViewModel = new PlantTypeViewModel() { PlantType = new PlantType() };
         }
 
     }

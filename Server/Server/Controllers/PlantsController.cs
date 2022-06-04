@@ -53,6 +53,24 @@ namespace Server.Controllers
             return plant;
         }
 
+        // GET: api/Plants/datalogger
+        [HttpGet("datalogger/{id}")]
+        public async Task<ActionResult<Plant>> GetPlantByDataloggerId(int id)
+        {
+            if (_context.Plants == null)
+            {
+                return NotFound();
+            }
+            var plant = await _context.Plants.FirstOrDefaultAsync(plant => plant.DataloggerId == id);
+
+            if (plant == null)
+            {
+                return NotFound();
+            }
+
+            return plant;
+        }
+
         // PUT: api/Plants/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

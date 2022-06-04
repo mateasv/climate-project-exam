@@ -40,23 +40,12 @@ namespace XamarinBase.ViewModels
             scan.OnScanResult += (async result => await ScanHandler(result));
 
 
-            await (Application.Current.MainPage as NavigationPage).PushAsync(scan);
+            //await (Application.Current.MainPage as NavigationPage).PushAsync(scan);
 
-            //DataloggerViewModel = new DataloggerViewModel()
-            //{
-            //    Datalogger = new Datalogger()
-            //    {
-            //        DataloggerId = 123,
-            //        MaxAirHumidity = 22.22F,
-            //        MaxAirTemperature = 44.44F,
-            //        MinAirHumidity = 33.33F,
-            //        MinAirTemperature = 55.55F,
-            //        PlantId = 3
-            //    }
-            //};
+            
 
 
-            //await ScanHandler(new ZXing.Result("1", null, null, ZXing.BarcodeFormat.QR_CODE));
+            await ScanHandler(new ZXing.Result("1", null, null, ZXing.BarcodeFormat.QR_CODE));
         }
 
 
@@ -74,14 +63,21 @@ namespace XamarinBase.ViewModels
                     {
                         var datalogger = await res.ContentToObjectAsync<Datalogger>();
 
-                        if(datalogger.PlantId != null)
-                        {
-                            await Application.Current.MainPage.DisplayAlert("Alert", $"This datalogger is paired with a tree", "Cancel", "ok");
-                        }
-                        else
-                        {
-                            DataloggerViewModel = new DataloggerViewModel() { Datalogger = datalogger };
-                        }
+                        DataloggerViewModel.Datalogger = datalogger;
+
+
+                        //if(datalogger.PlantId != null)
+                        //{
+                        //    var overwrite = await Application.Current.MainPage.DisplayAlert("Alert", $"This datalogger is already paired with a tree. Overwrite the old pair?", "Overwrite", "Cancel");
+
+                        //    if (overwrite)
+                        //        DataloggerViewModel.Datalogger = datalogger;
+
+                        //}
+                        //else
+                        //{
+                        //    DataloggerViewModel.Datalogger = datalogger;
+                        //}
                     }
                     else
                     {
@@ -93,8 +89,13 @@ namespace XamarinBase.ViewModels
                     await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {ex.Message}", "Cancel", "ok");
                 }
 
-                await (Application.Current.MainPage as NavigationPage).PopAsync();
+                //await (Application.Current.MainPage as NavigationPage).PopAsync();
             });
+        }
+
+        public void Reset()
+        {
+            DataloggerViewModel = new DataloggerViewModel() { Datalogger = new Datalogger() };
         }
     }
 }

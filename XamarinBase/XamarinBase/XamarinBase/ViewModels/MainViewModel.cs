@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using XamarinBase.Exstensions;
-using XamarinBase.Models;
 using XamarinBase.Services;
 using System.Linq;
 using XamarinBase.Views;

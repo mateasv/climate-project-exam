@@ -17,6 +17,9 @@ namespace XamarinBase.ViewModels
     {
         private readonly ISignalRService _signalRService;
         private readonly IDatabaseService _databaseService;
+        private readonly PlantDetailsViewModel _plantDetailsViewModel;
+        private readonly EditPlantViewModel _editPlantViewModel;
+        private readonly EditDataloggerViewModel _editDataloggerViewModel;
 
         private ObservableCollection<PlantViewModel> _plantViewModels;
         private bool _canOnLoadExecute;
@@ -43,6 +46,21 @@ namespace XamarinBase.ViewModels
             _databaseService = databaseService;
             _signalRService = signalRService;
 
+            
+        }
+
+        public PlantsViewModel(ISignalRService signalRService, 
+            IDatabaseService databaseService, 
+            PlantDetailsViewModel plantDetailsViewModel, 
+            EditPlantViewModel editPlantViewModel, 
+            EditDataloggerViewModel editDataloggerViewModel)
+        {
+            _signalRService = signalRService;
+            _databaseService = databaseService;
+            _plantDetailsViewModel = plantDetailsViewModel;
+            _editPlantViewModel = editPlantViewModel;
+            _editDataloggerViewModel = editDataloggerViewModel;
+
             PlantViewModels = new ObservableCollection<PlantViewModel>();
 
             GetPlantsCmd = new Command(async () => await GetPlants(), () => CanExecuteGetPlants);
@@ -55,14 +73,56 @@ namespace XamarinBase.ViewModels
 
         public async Task CreatePlant()
         {
+            _editPlantViewModel.Reset();
+            _editDataloggerViewModel.Reset();
+
+            _editPlantViewModel.GetPlantTypesCmd.Execute(this);
+            _plantDetailsViewModel.PlantDetailsCmd.Execute(this);
+
             await (Application.Current.MainPage as NavigationPage).PushAsync(new PlantDetailsView());
+        }
 
-            var plantDetailsViewModel = App.GetViewModel<PlantDetailsViewModel>() as PlantDetailsViewModel;
-            var editPlantViewModel = App.GetViewModel<EditPlantViewModel>() as EditPlantViewModel;
+        public async Task ViewPlantDetails(object obj)
+        {
+            if (obj is null) return;
 
-            editPlantViewModel.Reset();
-            editPlantViewModel.GetPlantTypesCmd.Execute(this);
-            plantDetailsViewModel.PlantDetailsCmd.Execute(this);
+            var plantViewModel = obj as PlantViewModel;
+
+            _editPlantViewModel.Reset();
+            _editDataloggerViewModel.Reset();
+
+            //_editPlantViewModel.GetPlantTypesCmd.Execute(this);
+            //_plantDetailsViewModel.PlantDetailsCmd.Execute(this);
+
+            await _editPlantViewModel.GetPlantTypes();
+            await _plantDetailsViewModel.PlantDetails();
+
+            _editPlantViewModel.PlantViewModel = plantViewModel;
+
+            try
+            {
+                if (plantViewModel.Plant.DataloggerId != null)
+                {
+                    var res = await _databaseService.GetAsync<Datalogger>(plantViewModel.Plant.DataloggerId.GetValueOrDefault());
+                    if (!res.IsSuccessStatusCode)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {res.StatusCode} Error in getting paired datalogger", "Ok", "Cancel");
+                    }
+                    else
+                    {
+                        var datalogger = await res.ContentToObjectAsync<Datalogger>();
+
+                        _editDataloggerViewModel.DataloggerViewModel = new DataloggerViewModel() { Datalogger = datalogger };
+                    }
+
+                }
+            }
+            catch(Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {ex.Message} Error in getting plant view details", "Ok", "Cancel");
+            }
+
+            await (Application.Current.MainPage as NavigationPage).PushAsync(new PlantDetailsView());
         }
 
         public async Task GetPlants()
@@ -78,22 +138,18 @@ namespace XamarinBase.ViewModels
                     PlantViewModels.Clear();
 
                     plants.ToList().ForEach(plant => PlantViewModels.Add(new PlantViewModel { Plant = plant }));
-                    await Application.Current.MainPage.DisplayAlert("Alert", $"{res.StatusCode}", "Cancel", "ok");
                 }
                 else
                 {
-                    await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {res.StatusCode}", "Cancel", "ok");
+                    await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {res.StatusCode}", "Ok", "Cancel");
                 }
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {ex.Message}", "Cancel", "ok");
+                await Application.Current.MainPage.DisplayAlert("Alert", $"HTTP error: {ex.Message} Error in getting plants", "Ok", "Cancel");
             }
         }
 
-        public async Task ViewPlantDetails(object obj)
-        {
-            //await (Application.Current.MainPage as NavigationPage).PushAsync(new PlantDetailsView());
-        }
+        
     }
 }

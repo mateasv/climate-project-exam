@@ -29,7 +29,7 @@ namespace XamarinBase.Services
 
         public DatabaseService(IHTTPClientHandlerCreationService clienthandler = null)
         {
-            
+
             _httpHandlerCreationService = clienthandler;
 
             Build();
@@ -41,7 +41,7 @@ namespace XamarinBase.Services
              * https://stackoverflow.com/questions/28629989/ignore-ssl-certificate-errors-in-xamarin-forms-pcl/54318410#54318410
              */
 
-            if(_httpHandlerCreationService == null)
+            if (_httpHandlerCreationService == null)
             {
                 var httpClientHandler = new HttpClientHandler();
                 httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
@@ -72,6 +72,15 @@ namespace XamarinBase.Services
         public async Task<HttpResponseMessage> GetAsync<T>(int id)
         {
             var endPointUrl = $"{APIUrl}/{typeof(T).Name}s/{id}";
+
+            var response = await GetAsync(endPointUrl);
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> GetAsync<T>(string endpoint, int id)
+        {
+            var endPointUrl = $"{APIUrl}/{typeof(T).Name}s/{endpoint}/{id}";
 
             var response = await GetAsync(endPointUrl);
 

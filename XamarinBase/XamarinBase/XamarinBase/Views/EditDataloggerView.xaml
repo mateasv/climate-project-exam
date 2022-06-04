@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:behavior="clr-namespace:XamarinBase.Behavior"
              x:Class="XamarinBase.Views.EditDataloggerView">
     <ContentView.Content>
         <StackLayout>
@@ -8,16 +8,32 @@
             <Entry Text="{Binding DataloggerViewModel.Datalogger.DataloggerId}" IsEnabled="False" ></Entry>
 
             <Label Text="MinAirHumidity"></Label>
-            <Entry Text="{Binding DataloggerViewModel.Datalogger.MaxAirHumidity, Mode=TwoWay}"></Entry>
+            <Entry Text="{Binding DataloggerViewModel.Datalogger.MaxAirHumidity, Mode=TwoWay}">
+                <Entry.Behaviors>
+                    <behavior:OnlyNumbersBehavior></behavior:OnlyNumbersBehavior>
+                </Entry.Behaviors>
+            </Entry>
 
             <Label Text="MaxAirHumidity"></Label>
-            <Entry Text="{Binding DataloggerViewModel.Datalogger.MinAirHumidity,Mode=TwoWay}"></Entry>
+            <Entry Text="{Binding DataloggerViewModel.Datalogger.MinAirHumidity,Mode=TwoWay}">
+                <Entry.Behaviors>
+                    <behavior:OnlyNumbersBehavior></behavior:OnlyNumbersBehavior>
+                </Entry.Behaviors>
+            </Entry>
 
             <Label Text="MinAirTemperature"></Label>
-            <Entry Text="{Binding DataloggerViewModel.Datalogger.MinAirTemperature,Mode=TwoWay}"></Entry>
+            <Entry Text="{Binding DataloggerViewModel.Datalogger.MinAirTemperature,Mode=TwoWay}">
+                <Entry.Behaviors>
+                    <behavior:OnlyNumbersBehavior></behavior:OnlyNumbersBehavior>
+                </Entry.Behaviors>
+            </Entry>
 
             <Label Text="MaxAirTemperature"></Label>
-            <Entry Text="{Binding DataloggerViewModel.Datalogger.MaxAirTemperature,Mode=TwoWay}"></Entry>
+            <Entry Text="{Binding DataloggerViewModel.Datalogger.MaxAirTemperature,Mode=TwoWay}">
+                <Entry.Behaviors>
+                    <behavior:OnlyNumbersBehavior></behavior:OnlyNumbersBehavior>
+                </Entry.Behaviors>
+            </Entry>
 
             <Button Text="Scan Datalogger" Command="{Binding ScanDataloggerCmd}"></Button>
         </StackLayout>

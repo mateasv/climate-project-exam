@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="XamarinBase.Views.EditPlantView">
+             x:Class="XamarinBase.Views.EditPlantView"
+             xmlns:behavior="clr-namespace:XamarinBase.Behavior"
+             >
     <ContentView.Content>
         <StackLayout>
             <Label Text="Plant Id"></Label>
@@ -13,7 +15,11 @@
                     SelectedItem="{Binding SelectedPlantTypeViewModel,Mode=TwoWay}"></Picker>
             
             <Label Text="Price"></Label>
-            <Entry Text="{Binding PlantViewModel.Plant.Price}"></Entry>
+            <Entry Text="{Binding PlantViewModel.Plant.Price}">
+                <Entry.Behaviors>
+                    <behavior:OnlyNumbersBehavior></behavior:OnlyNumbersBehavior>
+                </Entry.Behaviors>
+            </Entry>
 
             <Label Text="Warranty Start Date"></Label>
             <DatePicker MinimumDate="{Binding MinDate}" 
