@@ -18,7 +18,17 @@ namespace XamarinBase.ViewModels
         private readonly EditDataloggerViewModel _editDataloggerViewModel;
         private readonly EditPlantViewModel _editPlantViewModel;
 
+
         private ContentView _currentContentView;
+        private bool _isPlantChanged;
+
+        public bool IsPlantChanged
+        {
+            get { return _isPlantChanged; }
+            set { _isPlantChanged = value; }
+        }
+
+
 
         public ContentView CurrentContentView
         {
@@ -43,7 +53,10 @@ namespace XamarinBase.ViewModels
             PlantDetailsCmd = new Command(async () => await PlantDetails());
             DataloggerDetailsCmd = new Command(async () => await DataloggerDetails());
             ConfirmCmd = new Command(async () => await Confirm());
+
+            (Application.Current.MainPage as NavigationPage).Popped += PlantDetailsViewModel_Popped;
         }
+
 
         public async Task PlantDetails()
         {
@@ -77,6 +90,7 @@ namespace XamarinBase.ViewModels
                 {
                     if (await Edit(plant, datalogger))
                     {
+                        IsPlantChanged = true;
                         await (Application.Current.MainPage as NavigationPage).PopAsync();
                     }
                     else
@@ -96,37 +110,43 @@ namespace XamarinBase.ViewModels
         
         private async Task<bool> Create(Plant plant, Datalogger datalogger)
         {
-            bool doPair = datalogger.DataloggerId == 0 ? false : true;
+            return await CreateOrEdit(plant, datalogger, CreatePlant);
+        }
+
+        
+        private async Task<bool> Edit(Plant plant, Datalogger datalogger)
+        {
+            return await CreateOrEdit(plant, datalogger, EditPlant);
+        }
+
+
+
+        private async Task<bool> CreateOrEdit(Plant plant, Datalogger datalogger, Func<Plant, Task<bool>> crud)
+        {
+            var doPair = datalogger.DataloggerId != 0;
 
             if (!doPair)
             {
-                if (!await CreatePlant(plant))
-                {
-                    return false;
-                }
-                return true;
+                return await crud(plant);
             }
 
-            Plant pair;
+
             var res = await _databaseService.GetAsync<Plant>("datalogger", datalogger.DataloggerId);
 
             if (!res.IsSuccessStatusCode)
             {
                 plant.DataloggerId = datalogger.DataloggerId;
 
-                if (!await CreatePlant(plant))
-                {
-                    return false;
-                }
-                return true;
+                return await crud(plant);
             }
 
-            pair = await res.ContentToObjectAsync<Plant>();
 
-            bool overwritePair = await Application.Current.MainPage.DisplayAlert("Alert", $"This datalogger is already paired. Overwrite existing pair?", "Yes", "No");
+            var overwritePair = await Application.Current.MainPage.DisplayAlert("Alert", $"This datalogger is already paired. Overwrite existing pair?", "Yes", "No");
 
             if (overwritePair)
             {
+                var pair = await res.ContentToObjectAsync<Plant>();
+
                 if (!await OverwritePair(pair))
                 {
                     return false;
@@ -135,13 +155,10 @@ namespace XamarinBase.ViewModels
                 plant.DataloggerId = datalogger.DataloggerId;
             }
 
-            if (!await CreatePlant(plant))
-            {
-                return false;
-            }
-
-            return true;
+            return await crud(plant);
         }
+
+
 
         private async Task<bool> OverwritePair(Plant plant)
         {
@@ -156,8 +173,6 @@ namespace XamarinBase.ViewModels
 
             return true;
         }
-
-
         private async Task<bool> CreatePlant(Plant plant)
         {
             var res = await _databaseService.PostAsync<Plant>(plant);
@@ -169,15 +184,45 @@ namespace XamarinBase.ViewModels
 
             return true;
         }
-        
-        private async Task<bool> Edit(Plant plant, Datalogger datalogger)
+
+        private async Task<bool> EditPlant(Plant plant)
         {
-
-
+            var res = await _databaseService.PutAsync<Plant>(plant.PlantId,plant);
+            if (!res.IsSuccessStatusCode)
+            {
+                ErrorMessage = $"Http Error: {res.ReasonPhrase} Error editing plant";
+                return false;
+            }
 
             return true;
         }
 
+        private async void PlantDetailsViewModel_Popped(object sender, NavigationEventArgs e)
+        {
+            if (IsPlantChanged)
+            {
+                IsPlantChanged = false;
+                return;
+            }
 
+            var currentPlant = _editPlantViewModel.PlantViewModel.Plant;
+
+            if (currentPlant.PlantId == 0)
+            {
+                return;
+            }
+
+            var res = await _databaseService.GetAsync<Plant>(currentPlant.PlantId);
+
+            if (!res.IsSuccessStatusCode)
+            {
+                await Application.Current.MainPage.DisplayAlert("Alert", $"Http Error: {res.ReasonPhrase} Error restoring unmodified plant", "Ok", "Cancel");
+                return;
+            }
+
+            var restoredPlant = await res.ContentToObjectAsync<Plant>();
+
+            _editPlantViewModel.PlantViewModel.Plant = restoredPlant;
+        }
     }
 }

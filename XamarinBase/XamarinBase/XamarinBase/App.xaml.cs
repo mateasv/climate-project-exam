@@ -22,15 +22,19 @@ namespace XamarinBase
         {
             InitializeComponent();
 
+            var navigationPage = new NavigationPage();
+            MainPage = navigationPage;
+
             SetupServices(addPlatformServices);
 
-            var navigationPage = new NavigationPage();
-            //navigationPage.PushAsync(new BarcodeView());
             navigationPage.PushAsync(new MainView());
+
+
+
+            //navigationPage.PushAsync(new BarcodeView());
 
             //MainPage = navigationPage;
             //MainPage = new CameraView();
-            MainPage = navigationPage;
         }
 
         void SetupServices(Action<IServiceCollection> addPlatformServices = null)
@@ -69,5 +73,7 @@ namespace XamarinBase
         protected override void OnResume()
         {
         }
+
+        
     }
 }
