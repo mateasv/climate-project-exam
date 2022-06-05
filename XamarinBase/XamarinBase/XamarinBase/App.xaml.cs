@@ -51,6 +51,7 @@ namespace XamarinBase
             services.AddSingleton<PlantsViewModel>();
             services.AddSingleton<EditPlantViewModel>();
             services.AddSingleton<EditDataloggerViewModel>();
+            services.AddSingleton<ChartViewModel>();
 
             // Add core services
             services.AddSingleton<IDatabaseService,DatabaseService>();

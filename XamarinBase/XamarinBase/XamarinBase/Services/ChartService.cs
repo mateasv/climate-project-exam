@@ -27,6 +27,7 @@ namespace XamarinBase.Services
             }));
 
             var chart = new LineChart { Entries = entries };
+            chart.LabelTextSize = 30;
             chart.LabelOrientation = Orientation.Horizontal;
             chart.ValueLabelOrientation = Orientation.Horizontal;
 

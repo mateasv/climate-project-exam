@@ -64,20 +64,6 @@ namespace XamarinBase.ViewModels
                         var datalogger = await res.ContentToObjectAsync<Datalogger>();
 
                         DataloggerViewModel.Datalogger = datalogger;
-
-
-                        //if(datalogger.PlantId != null)
-                        //{
-                        //    var overwrite = await Application.Current.MainPage.DisplayAlert("Alert", $"This datalogger is already paired with a tree. Overwrite the old pair?", "Overwrite", "Cancel");
-
-                        //    if (overwrite)
-                        //        DataloggerViewModel.Datalogger = datalogger;
-
-                        //}
-                        //else
-                        //{
-                        //    DataloggerViewModel.Datalogger = datalogger;
-                        //}
                     }
                     else
                     {

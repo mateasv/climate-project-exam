@@ -55,12 +55,12 @@ namespace Server.Models
 
                 entity.Property(e => e.AirHumidity).HasColumnName("air_humidity");
 
-                entity.Property(e => e.AirTemerature).HasColumnName("air_temerature");
+                entity.Property(e => e.AirTemperature).HasColumnName("air_temperature");
 
                 entity.Property(e => e.DataloggerId).HasColumnName("datalogger_id");
 
                 entity.Property(e => e.MeasurementDate)
-                    .HasColumnType("date")
+                    .HasColumnType("datetime")
                     .HasColumnName("measurement_date");
 
                 entity.Property(e => e.PlantId).HasColumnName("plant_id");

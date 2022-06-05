@@ -4,7 +4,7 @@ using Server.Hubs;
 using Server.Models;
 
 // https://code-maze.com/ten-things-avoid-aspnetcore-controllers/ best practices for controllers
-// Scaffold-DbContext "Server=DESKTOP-4AN5991;Database=TreeDB;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+// Scaffold-DbContext "Server=DESKTOP-4AN5991;Database=TreeDB;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -force
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -9,6 +9,7 @@ using XamarinBase.Services;
 using XamarinBase.Views;
 using XamarinBase.Exstensions;
 using System.Net.Http;
+using System.Collections.ObjectModel;
 
 namespace XamarinBase.ViewModels
 {
@@ -17,6 +18,8 @@ namespace XamarinBase.ViewModels
         private readonly IDatabaseService _databaseService;
         private readonly EditDataloggerViewModel _editDataloggerViewModel;
         private readonly EditPlantViewModel _editPlantViewModel;
+        private readonly ChartViewModel _chartViewModel;
+        
 
 
         private ContentView _currentContentView;
@@ -39,24 +42,28 @@ namespace XamarinBase.ViewModels
         public ICommand PlantDetailsCmd { get; set; }
         public ICommand DataloggerDetailsCmd { get; set; }
         public ICommand ConfirmCmd { get; set; }
-
+        public ICommand ChartCmd { get; set; }
+        
 
         public PlantDetailsViewModel(
-            IDatabaseService databaseService, 
+            IDatabaseService databaseService,
             EditDataloggerViewModel editDataloggerViewModel, 
-            EditPlantViewModel editPlantViewModel)
+            EditPlantViewModel editPlantViewModel,
+            ChartViewModel chartViewModel)
         {
             _databaseService = databaseService;
             _editDataloggerViewModel = editDataloggerViewModel;
             _editPlantViewModel = editPlantViewModel;
+            _chartViewModel = chartViewModel;
+
 
             PlantDetailsCmd = new Command(async () => await PlantDetails());
             DataloggerDetailsCmd = new Command(async () => await DataloggerDetails());
             ConfirmCmd = new Command(async () => await Confirm());
+            ChartCmd = new Command(async () => await Chart());
 
             (Application.Current.MainPage as NavigationPage).Popped += PlantDetailsViewModel_Popped;
         }
-
 
         public async Task PlantDetails()
         {
@@ -66,6 +73,31 @@ namespace XamarinBase.ViewModels
         public async Task DataloggerDetails()
         {
             CurrentContentView = new EditDataloggerView();
+        }
+
+        public async Task Chart()
+        {
+            var plant = _editPlantViewModel.PlantViewModel.Plant;
+
+            if(plant.PlantId == 0)
+            {
+                await Application.Current.MainPage.DisplayAlert("Alert", $"No chart data", "Ok", "Cancel");
+                return;
+            }
+
+            var res = await _databaseService.GetAsync<Measurement>("plant",plant.PlantId);
+            if (!res.IsSuccessStatusCode)
+            {
+                await Application.Current.MainPage.DisplayAlert("Alert", $"No chart data", "Ok", "Cancel");
+                return;
+            }
+
+            var measurements = await res.ContentToCollectionAsync<Measurement>();
+            _chartViewModel.Measurements = new ObservableCollection<Measurement>(measurements);
+
+            await _chartViewModel.GenerateChart();
+
+            CurrentContentView = new ChartView();
         }
 
         public async Task Confirm()

@@ -35,6 +35,7 @@ namespace Server.Controllers
             return await _context.Measurements.ToListAsync();
         }
 
+
         // GET: api/Measurements/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Measurement>> GetMeasurement(int id)
@@ -44,6 +45,24 @@ namespace Server.Controllers
               return NotFound();
           }
             var measurement = await _context.Measurements.FindAsync(id);
+
+            if (measurement == null)
+            {
+                return NotFound();
+            }
+
+            return measurement;
+        }
+
+        // GET: api/Measurements/plant/5
+        [HttpGet("plant/{id}")]
+        public async Task<ActionResult<IEnumerable<Measurement>>> GetMeasurementByPlantId(int id)
+        {
+            if (_context.Measurements == null)
+            {
+                return NotFound();
+            }
+            var measurement = await _context.Measurements.Where(m => m.PlantId == id).ToListAsync();
 
             if (measurement == null)
             {
