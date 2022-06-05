@@ -59,9 +59,13 @@ namespace XamarinBase.ViewModels
             { 
                 _selectedPlantTypeViewModel = value;
 
-                if(value != null)
+                if(value != null && value.PlantType.PlantTypeId != 0)
                 {
                     PlantViewModel.Plant.PlantTypeId = SelectedPlantTypeViewModel.PlantType.PlantTypeId;
+                }
+                else
+                {
+                    PlantViewModel.Plant.PlantTypeId = null;
                 }
                 OnPropertyChanged();
             }
@@ -153,7 +157,6 @@ namespace XamarinBase.ViewModels
         public void Reset()
         {
             PlantViewModel = new PlantViewModel() { Plant = new Plant() };
-            //SelectedPlantTypeViewModel = null;
             SelectedPlantTypeViewModel = new PlantTypeViewModel() { PlantType = new PlantType() };
         }
 

@@ -96,30 +96,71 @@ namespace XamarinBase.ViewModels
         
         private async Task<bool> Create(Plant plant, Datalogger datalogger)
         {
-            bool doPair = true;
+            bool doPair = datalogger.DataloggerId == 0 ? false : true;
 
-            var res = await _databaseService.GetAsync<Plant>("datalogger", datalogger.DataloggerId);
-            if (res.IsSuccessStatusCode)
+            if (!doPair)
             {
-                doPair = await Application.Current.MainPage.DisplayAlert("Alert", $"This datalogger is already paired. Overwrite existing pair?", "Yes", "No");
+                if (!await CreatePlant(plant))
+                {
+                    return false;
+                }
+                return true;
             }
 
-            if (doPair) 
-            {
-                var unpairPlant = await res.ContentToObjectAsync<Plant>();
-                unpairPlant.DataloggerId = null;
+            Plant pair;
+            var res = await _databaseService.GetAsync<Plant>("datalogger", datalogger.DataloggerId);
 
-                res = await _databaseService.PutAsync<Plant>(unpairPlant.PlantId, unpairPlant);
-                if (!res.IsSuccessStatusCode)
+            if (!res.IsSuccessStatusCode)
+            {
+                plant.DataloggerId = datalogger.DataloggerId;
+
+                if (!await CreatePlant(plant))
                 {
-                    ErrorMessage = $"Http Error: {res.ReasonPhrase} Error unpairing existing plant";
+                    return false;
+                }
+                return true;
+            }
+
+            pair = await res.ContentToObjectAsync<Plant>();
+
+            bool overwritePair = await Application.Current.MainPage.DisplayAlert("Alert", $"This datalogger is already paired. Overwrite existing pair?", "Yes", "No");
+
+            if (overwritePair)
+            {
+                if (!await OverwritePair(pair))
+                {
                     return false;
                 }
 
                 plant.DataloggerId = datalogger.DataloggerId;
             }
 
-            res = await _databaseService.PostAsync<Plant>(plant);
+            if (!await CreatePlant(plant))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> OverwritePair(Plant plant)
+        {
+            plant.DataloggerId = null;
+
+            var res = await _databaseService.PutAsync<Plant>(plant.PlantId, plant);
+            if (!res.IsSuccessStatusCode)
+            {
+                ErrorMessage = $"Http Error: {res.ReasonPhrase} Error unpairing existing plant";
+                return false;
+            }
+
+            return true;
+        }
+
+
+        private async Task<bool> CreatePlant(Plant plant)
+        {
+            var res = await _databaseService.PostAsync<Plant>(plant);
             if (!res.IsSuccessStatusCode)
             {
                 ErrorMessage = $"Http Error: {res.ReasonPhrase} Error creating plant";
@@ -128,9 +169,8 @@ namespace XamarinBase.ViewModels
 
             return true;
         }
-
         
-        public async Task<bool> Edit(Plant plant, Datalogger datalogger)
+        private async Task<bool> Edit(Plant plant, Datalogger datalogger)
         {
 
 
