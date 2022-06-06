@@ -103,6 +103,8 @@ namespace XamarinBase.Services
             return response;
         }
 
+
+
         public async Task<HttpResponseMessage> PostAsync(string url, object obj)
         {
             var httpContent = CreateHttpContent(obj);
@@ -115,6 +117,15 @@ namespace XamarinBase.Services
         public async Task<HttpResponseMessage> PutAsync<T>(int id, T obj)
         {
             var endPointUrl = $"{APIUrl}/{typeof(T).Name}s/{id}";
+
+            var response = await PutAsync(endPointUrl, obj);
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> PutAsync(string endpoint, int id, object obj)
+        {
+            var endPointUrl = $"{APIUrl}/{endpoint}/{id}";
 
             var response = await PutAsync(endPointUrl, obj);
 

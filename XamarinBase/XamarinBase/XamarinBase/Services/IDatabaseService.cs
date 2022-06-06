@@ -17,6 +17,7 @@ namespace XamarinBase.Services
         Task<HttpResponseMessage> GetAsync<T>(string endpoint, int id);
         Task<HttpResponseMessage> PostAsync(string url, object obj);
         Task<HttpResponseMessage> PostAsync<T>(T obj);
+        Task<HttpResponseMessage> PutAsync(string endpoint, int id, object obj);
         Task<HttpResponseMessage> PutAsync(string url, object obj);
         Task<HttpResponseMessage> PutAsync<T>(int id, T obj);
     }

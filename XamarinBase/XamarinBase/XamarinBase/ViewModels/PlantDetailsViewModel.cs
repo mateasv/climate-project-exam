@@ -173,13 +173,13 @@ namespace XamarinBase.ViewModels
             }
 
 
-            var overwritePair = await Application.Current.MainPage.DisplayAlert("Alert", $"This datalogger is already paired. Overwrite existing pair?", "Yes", "No");
+            var removePair = await Application.Current.MainPage.DisplayAlert("Alert", $"This datalogger is already paired. Remove existing pair and make new pair?", "Yes", "No");
 
-            if (overwritePair)
+            if (removePair)
             {
                 var pair = await res.ContentToObjectAsync<Plant>();
 
-                if (!await OverwritePair(pair))
+                if (!await RemovePair(pair))
                 {
                     return false;
                 }
@@ -192,11 +192,9 @@ namespace XamarinBase.ViewModels
 
 
 
-        private async Task<bool> OverwritePair(Plant plant)
+        private async Task<bool> RemovePair(Plant plant)
         {
-            plant.DataloggerId = null;
-
-            var res = await _databaseService.PutAsync<Plant>(plant.PlantId, plant);
+            var res = await _databaseService.PutAsync("dataloggerpair/removepair",plant.PlantId, plant);
             if (!res.IsSuccessStatusCode)
             {
                 ErrorMessage = $"Http Error: {res.ReasonPhrase} Error unpairing existing plant";
@@ -207,7 +205,7 @@ namespace XamarinBase.ViewModels
         }
         private async Task<bool> CreatePlant(Plant plant)
         {
-            var res = await _databaseService.PostAsync<Plant>(plant);
+            var res = await _databaseService.PostAsync($"{_databaseService.APIUrl}/dataloggerpair",plant);
             if (!res.IsSuccessStatusCode)
             {
                 ErrorMessage = $"Http Error: {res.ReasonPhrase} Error creating plant";
@@ -219,7 +217,7 @@ namespace XamarinBase.ViewModels
 
         private async Task<bool> EditPlant(Plant plant)
         {
-            var res = await _databaseService.PutAsync<Plant>(plant.PlantId,plant);
+            var res = await _databaseService.PutAsync("dataloggerpair", plant.PlantId,plant);
             if (!res.IsSuccessStatusCode)
             {
                 ErrorMessage = $"Http Error: {res.ReasonPhrase} Error editing plant";

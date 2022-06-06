@@ -5,6 +5,6 @@ namespace Server.Hubs
     public interface ITreeHubClient
     {
         Task ReceiveWarning(MeasurementDto measurement, bool isWarning);
-        Task ReceiveDataloggerPair(DataloggerDto datalogger);
+        Task ReceiveDataloggerPair(PlantDto plant);
     }
 }
