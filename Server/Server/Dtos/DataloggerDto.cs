@@ -3,7 +3,6 @@
     public class DataloggerDto
     {
         public int DataloggerId { get; set; }
-        public int? PlantId { get; set; }
         public float? MinAirHumidity { get; set; }
         public float? MaxAirHumidity { get; set; }
         public float? MinAirTemperature { get; set; }

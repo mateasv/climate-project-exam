@@ -5,7 +5,7 @@
              x:Class="XamarinBase.MainView"
              xmlns:vm="clr-namespace:XamarinBase.ViewModels">
     <!--<ContentPage.Behaviors>
-        <xct:EventToCommandBehavior EventName="Appearing" Command="{Binding GetPlantsCmd}"></xct:EventToCommandBehavior>
+        <xct:EventToCommandBehavior EventName="Appearing" Command="{Binding ConnectSignalRCmd}"></xct:EventToCommandBehavior>
     </ContentPage.Behaviors>-->
 
 

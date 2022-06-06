@@ -5,10 +5,6 @@ namespace Server.Hubs
     public class TreeHub : Hub<ITreeHubClient>
     {
         private static readonly Dictionary<string,int> Dataloggers = new();
-        public async Task SendHello()
-        {
-            await Clients.All.ReceiveHello("A");
-        }
 
         public async Task RegisterDatalogger(int id)
         {
@@ -24,10 +20,6 @@ namespace Server.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId,"AppClient");
         }
 
-        public override Task OnConnectedAsync()
-        {
-            return base.OnConnectedAsync();
-        }
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {

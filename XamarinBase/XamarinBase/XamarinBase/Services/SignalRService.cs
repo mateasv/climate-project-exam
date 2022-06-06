@@ -2,6 +2,7 @@
 using Server.Models;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using XamarinBase.EventArguments;
@@ -34,27 +35,38 @@ namespace XamarinBase.Services
 
         public void Build()
         {
-            _hubConnection = new HubConnectionBuilder().WithUrl(ConnectionUrl).Build();
+            _hubConnection = new HubConnectionBuilder().WithUrl(ConnectionUrl, (opts) =>
+            {
+                opts.HttpMessageHandlerFactory = (message) =>
+                {
+                    if (message is HttpClientHandler clientHandler)
+                        // bypass SSL certificate
+                        clientHandler.ServerCertificateCustomValidationCallback +=
+                            (sender, certificate, chain, sslPolicyErrors) => { return true; };
+                    return message;
+                };
+            }).Build();
 
             _hubConnection.On<Measurement, bool>("ReceiveWarning", (measurement, isWarning) =>
             {
                 OnReceiveWarning?.Invoke(this, new WarningEventArgs() { Measurement = measurement, IsWarning = isWarning });
             });
-
         }
 
-        public async Task StartAsync()
+        public async Task<bool> StartAsync()
         {
-            try
-            {
-                await _hubConnection.StartAsync();
-                IsConnected = true;
-                OnConnectSuccess?.Invoke(this, new ConnectionEventArgs { IsConnected = true });
-            }
-            catch (Exception ex)
-            {
-                OnConnectFailed?.Invoke(this, new ConnectionEventArgs { IsConnected = false, Exception = ex });
-            }
+
+
+            await _hubConnection.StartAsync();
+
+            IsConnected = true;
+
+            return IsConnected;
+        }
+
+        public async Task RegisterApp()
+        {
+            await _hubConnection.SendAsync("RegisterApp");
         }
     }
 }

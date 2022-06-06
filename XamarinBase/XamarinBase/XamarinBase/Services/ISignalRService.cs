@@ -14,6 +14,7 @@ namespace XamarinBase.Services
         event EventHandler<WarningEventArgs> OnReceiveWarning;
 
         void Build();
-        Task StartAsync();
+        Task RegisterApp();
+        Task<bool> StartAsync();
     }
 }

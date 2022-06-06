@@ -84,7 +84,7 @@ namespace XamarinTest
 
             var chart = cs.CreateChart<Measurement>(
                 list,
-                value: (m) => m.AirTemerature, 
+                value: (m) => m.AirTemperature, 
                 label: (m) => m.MeasurementId.ToString()
             );
 

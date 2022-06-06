@@ -27,14 +27,8 @@ namespace XamarinBase
 
             SetupServices(addPlatformServices);
 
+            
             navigationPage.PushAsync(new MainView());
-
-
-
-            //navigationPage.PushAsync(new BarcodeView());
-
-            //MainPage = navigationPage;
-            //MainPage = new CameraView();
         }
 
         void SetupServices(Action<IServiceCollection> addPlatformServices = null)
@@ -63,8 +57,10 @@ namespace XamarinBase
         }
 
 
-        protected override void OnStart()
+        protected override async void OnStart()
         {
+            var mainViewModel = GetViewModel<MainViewModel>() as MainViewModel;
+            await mainViewModel.ConnectSignalR();
         }
 
         protected override void OnSleep()

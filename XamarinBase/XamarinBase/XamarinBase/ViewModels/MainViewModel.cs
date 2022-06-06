@@ -12,6 +12,8 @@ using XamarinBase.Exstensions;
 using XamarinBase.Services;
 using System.Linq;
 using XamarinBase.Views;
+using XamarinBase.EventArguments;
+using Plugin.LocalNotifications;
 
 namespace XamarinBase.ViewModels
 {
@@ -34,7 +36,7 @@ namespace XamarinBase.ViewModels
 
         public ICommand PlantsViewCmd { get; set; }
         public ICommand ConnectionViewCmd { get; set; }
-        
+        public ICommand ConnectSignalRCmd { get; set; }
 
 
         public MainViewModel(ISignalRService signalRService, IDatabaseService databaseService)
@@ -44,10 +46,45 @@ namespace XamarinBase.ViewModels
 
             PlantsViewCmd = new Command(async () => await PlantsView());
             ConnectionViewCmd = new Command(async () => await ConnectionView());
+            ConnectSignalRCmd = new Command(async () => await ConnectSignalR());
+
+            _signalRService.OnReceiveWarning += _signalRService_OnReceiveWarning;
+            _signalRService.Build();
+            
 
 
-            CurrentContentView = new PlantsView();
+            PlantsView();
         }
+
+        private async void _signalRService_OnReceiveWarning(object sender, WarningEventArgs e)
+        {
+            if (!e.IsWarning) return;
+
+            var measurement = e.Measurement;
+
+            CrossLocalNotifications.Current.Show("Tree Warning", $"Tree {measurement.PlantId} with datalogger {measurement.DataloggerId} has dry soil or too low temperature");
+        }
+
+        public async Task ConnectSignalR()
+        {
+            if (_signalRService.IsConnected)
+            {
+                return;
+            }
+
+            try
+            {
+                await _signalRService.StartAsync();
+                await _signalRService.RegisterApp();
+                await Application.Current.MainPage.DisplayAlert("Alert", $"SignalR Success", "Ok", "Cancel");
+
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Alert", $"SignalR error: {ex.Message}", "Ok", "Cancel");
+            }
+        }
+
         public async Task CreatePlant()
         {
             await (App.Current.MainPage as NavigationPage).PushAsync(new PlantDetailsView());
@@ -63,39 +100,4 @@ namespace XamarinBase.ViewModels
             CurrentContentView = new PlantsView();
         }
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-    //// chart test
-    //var list = new List<Measurement>()
-    //{
-    //    new Measurement
-    //    {
-    //        MeasurementId = 1,
-    //        AirTemerature = 11.11F,
-    //    },
-    //    new Measurement
-    //    {
-    //        MeasurementId = 2,
-    //        AirTemerature = 21.11F,
-    //    }
-    //};
-
-    //var chart = chartService.CreateChart<Measurement>(
-    //    list,
-    //    value: (m) => m.AirTemerature,
-    //    label: (m) => m.MeasurementId.ToString()
-    //);
-
-    //Chart = chart;
 }

@@ -12,9 +12,12 @@ namespace XamarinBase.ViewModels
     {
         private ISignalRService _signalRService;
         private IDatabaseService _databaseService;
+        private MainViewModel _mainViewModel;
+
 
         private string _databaseUrl;
         private string _signalRUrl;
+
 
         public ICommand ConfirmCmd { get; set; }
 
@@ -34,10 +37,12 @@ namespace XamarinBase.ViewModels
 
 
 
-        public ConnectionViewModel(ISignalRService signalRService, IDatabaseService databaseService)
+        public ConnectionViewModel(ISignalRService signalRService, IDatabaseService databaseService, MainViewModel mainViewModel)
         {
             _signalRService = signalRService;
             _databaseService = databaseService;
+            _mainViewModel = mainViewModel;
+
 
             ConfirmCmd = new Command(async () => await Confirm());
 
@@ -50,6 +55,12 @@ namespace XamarinBase.ViewModels
         {
             _databaseService.APIUrl = DatabaseUrl;
             _databaseService.Build();
+
+            _signalRService.ConnectionUrl = SignalRUrl;
+            _signalRService.Build();
+
+            await _mainViewModel.PlantsView();
+            await _mainViewModel.ConnectSignalR();
         }
     }
 }

@@ -58,7 +58,7 @@ namespace Server.Controllers
 
             var measurementDto = _mapper.Map<MeasurementDto>(measurement);
 
-            if (measurementDto.SoilIsDry || measurementDto.AirTemerature < datalogger.MinAirTemperature)
+            if (measurementDto.SoilIsDry || measurementDto.AirTemperature < datalogger.MinAirTemperature)
             {
                 await _hubContext.Clients.Group($"Datalogger: {datalogger.DataloggerId}").ReceiveWarning(measurementDto, true);
                 await _hubContext.Clients.Group("AppClient").ReceiveWarning(measurementDto, true);
