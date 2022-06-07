@@ -39,15 +39,21 @@ namespace Server.Controllers
             return await _measurementsController.GetMeasurement(id);
         }
 
-        
 
+        /// <summary>
+        /// Endpoint for the dataloggers. This endpoint inserts a measurement into the database, and if
+        /// successful, call the ReceiveWarning on the SignalR clients
+        /// </summary>
+        /// <param name="measurement"></param>
+        /// <returns></returns>
         // POST: api/DataloggerMeasurements
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<MeasurementDto>> PostMeasurement(Measurement measurement)
         {
+            // to do
             var result = await _dataloggersController.GetDatalogger(measurement.DataloggerId.GetValueOrDefault());
-
+            
             if (result.Result is NotFoundResult) return NotFound($"Datalogger not found for id: {measurement.DataloggerId}");
             if (result.Value is null) return NotFound($"Datalogger is null");
 
