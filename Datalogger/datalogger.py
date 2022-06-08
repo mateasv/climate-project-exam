@@ -9,7 +9,7 @@ import requests
 ## Settings
 backend_url = 'http://10.176.160.179:5189/api/DataloggerMeasurements' # Default: /api/DataloggerMeasurements
 send_interval_in_sec = 3600 #3600 = 1 hour
-print_status_message_interval = 15 # Send a "Sending measurement in xx:yy:zz" every x seconds
+print_status_message_interval = 15 # Prints a "Sending measurement in xx:yy:zz" every x seconds
 
 # Air Humidity + Temperature
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -31,9 +31,8 @@ def convertSecondsToHHMMSS(sec):
     return "%d:%02d:%02d" % (hour, minutes, sec)
 
 while True:
-    if counter % 20 == 0:
-        if counter != 0:
-            print('Sending measurement in ' + convertSecondsToHHMMSS(send_interval_in_sec - counter))
+    if counter % 20 == 0 & counter != 0:
+        print('Sending measurement in ' + convertSecondsToHHMMSS(send_interval_in_sec - counter))
     if counter % send_interval_in_sec == 0:
         counter = 0
         print('Sending measurements now!')
