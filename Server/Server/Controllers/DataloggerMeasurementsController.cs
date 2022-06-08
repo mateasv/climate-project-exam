@@ -51,27 +51,38 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<ActionResult<MeasurementDto>> PostMeasurement(Measurement measurement)
         {
-            // to do
+            // Find the datalogger which performed the measurement
             var result = await _dataloggersController.GetDatalogger(measurement.DataloggerId.GetValueOrDefault());
             
+            // Perform checks if the datalogger is found
             if (result.Result is NotFoundResult) return NotFound($"Datalogger not found for id: {measurement.DataloggerId}");
             if (result.Value is null) return NotFound($"Datalogger is null");
 
+            // Get the datalogger object
             var datalogger = result.Value;
 
+            // Insert the measurement into the database
             await _context.Measurements.AddAsync(measurement);
             await _context.SaveChangesAsync();
 
+            // Prepare the measurement object by mapping it to a data transfer object (DTO)
             var measurementDto = _mapper.Map<MeasurementDto>(measurement);
 
+            // If the measurement evaluates to dry or if the measured air temperature is less than the datalogger air temperature limit
             if (measurementDto.SoilIsDry || measurementDto.AirTemperature < datalogger.MinAirTemperature)
             {
+                // Contact the datalogger that performed the measurement about the warning
                 await _hubContext.Clients.Group($"Datalogger: {datalogger.DataloggerId}").ReceiveWarning(measurementDto, true);
+
+                // Contact the mobile clients, and inform them about the warning
                 await _hubContext.Clients.Group("AppClient").ReceiveWarning(measurementDto, true);
             }
             else
             {
+                // Contact the datalogger that the performed measurement is not a warning
                 await _hubContext.Clients.Group($"Datalogger: {datalogger.DataloggerId}").ReceiveWarning(measurementDto, false);
+
+                // Contact the mobile clients, and inform them that the measurement is not a warning
                 await _hubContext.Clients.Group("AppClient").ReceiveWarning(measurementDto, false);
             }
 

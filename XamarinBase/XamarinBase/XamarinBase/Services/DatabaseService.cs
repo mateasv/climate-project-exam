@@ -13,12 +13,16 @@ using XamarinBase.Exstensions;
 namespace XamarinBase.Services
 {
 
-
+    /// <summary>
+    /// Database service class responsible for basic crud operations and setup of the
+    /// HttpClient
+    /// </summary>
     public class DatabaseService : IDatabaseService
     {
+        // http client handler used, if we are running on an android phone with Xamarin.forms
+        private IHTTPClientHandlerCreationService _httpHandlerCreationService;
 
         private string _APIUrl;
-        private IHTTPClientHandlerCreationService _httpHandlerCreationService;
         public string APIUrl
         {
             get { return _APIUrl; }
@@ -29,7 +33,6 @@ namespace XamarinBase.Services
 
         public DatabaseService(IHTTPClientHandlerCreationService clienthandler = null)
         {
-
             _httpHandlerCreationService = clienthandler;
 
             Build();
@@ -41,10 +44,14 @@ namespace XamarinBase.Services
              * https://stackoverflow.com/questions/28629989/ignore-ssl-certificate-errors-in-xamarin-forms-pcl/54318410#54318410
              */
 
+            // if the program is not using Xamarin.forms
             if (_httpHandlerCreationService == null)
             {
-                var httpClientHandler = new HttpClientHandler();
-                httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+                // setup the httpclient handler with ssl bypass for testing the program
+                var httpClientHandler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; }
+                };
 
                 HttpClient = new HttpClient(httpClientHandler);
 
@@ -52,14 +59,21 @@ namespace XamarinBase.Services
             }
             else
             {
+                // setup the httpclient with an Android specific implementation of the httpclient handler
                 HttpClient = new HttpClient(_httpHandlerCreationService.GetInsecureHandler());
 
                 APIUrl = "https://10.0.2.2:7189/api";
             }
 
+            // set timeout to 15 seconds
             HttpClient.Timeout = TimeSpan.FromSeconds(15);
         }
 
+        /// <summary>
+        /// Sends a http get request that fetches all records
+        /// </summary>
+        /// <typeparam name="T">type of object to get from the server</typeparam>
+        /// <returns></returns>
         public async Task<HttpResponseMessage> GetAsync<T>()
         {
             var endPointUrl = $"{APIUrl}/{typeof(T).Name}s";
@@ -69,6 +83,12 @@ namespace XamarinBase.Services
             return response;
         }
 
+        /// <summary>
+        /// Http get request for a single object
+        /// </summary>
+        /// <typeparam name="T">type of object to get from the server</typeparam>
+        /// <param name="id">id of the object</param>
+        /// <returns></returns>
         public async Task<HttpResponseMessage> GetAsync<T>(int id)
         {
             var endPointUrl = $"{APIUrl}/{typeof(T).Name}s/{id}";
@@ -78,6 +98,13 @@ namespace XamarinBase.Services
             return response;
         }
 
+        /// <summary>
+        /// Http request for a 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="endpoint"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<HttpResponseMessage> GetAsync<T>(string endpoint, int id)
         {
             var endPointUrl = $"{APIUrl}/{typeof(T).Name}s/{endpoint}/{id}";
