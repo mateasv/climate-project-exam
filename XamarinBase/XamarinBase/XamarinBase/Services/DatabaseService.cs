@@ -99,10 +99,10 @@ namespace XamarinBase.Services
         }
 
         /// <summary>
-        /// Http request for a 
+        /// Http request for a single object, but with a different endpoint
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="endpoint"></param>
+        /// <typeparam name="T">type of object</typeparam>
+        /// <param name="endpoint">endpoint</param>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<HttpResponseMessage> GetAsync<T>(string endpoint, int id)
@@ -114,6 +114,11 @@ namespace XamarinBase.Services
             return response;
         }
 
+        /// <summary>
+        /// Http request with a specified url 
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         public async Task<HttpResponseMessage> GetAsync(string url)
         {
             var response = await HttpClient.GetAsync(url);
@@ -121,6 +126,12 @@ namespace XamarinBase.Services
             return response;
         }
 
+        /// <summary>
+        /// Post request
+        /// </summary>
+        /// <typeparam name="T">object type to be posted</typeparam>
+        /// <param name="obj">object to post</param>
+        /// <returns></returns>
         public async Task<HttpResponseMessage> PostAsync<T>(T obj)
         {
             var endPointUrl = $"{APIUrl}/{typeof(T).Name}s";
@@ -131,7 +142,12 @@ namespace XamarinBase.Services
         }
 
 
-
+        /// <summary>
+        /// Post request with userdefined url
+        /// </summary>
+        /// <param name="url">Url for the endpoint</param>
+        /// <param name="obj">object to post</param>
+        /// <returns></returns>
         public async Task<HttpResponseMessage> PostAsync(string url, object obj)
         {
             var httpContent = CreateHttpContent(obj);
@@ -141,6 +157,13 @@ namespace XamarinBase.Services
             return response;
         }
 
+        /// <summary>
+        /// Put request to modify an object
+        /// </summary>
+        /// <typeparam name="T">type of object</typeparam>
+        /// <param name="id">id of object</param>
+        /// <param name="obj">the updated object</param>
+        /// <returns></returns>
         public async Task<HttpResponseMessage> PutAsync<T>(int id, T obj)
         {
             var endPointUrl = $"{APIUrl}/{typeof(T).Name}s/{id}";
@@ -150,6 +173,13 @@ namespace XamarinBase.Services
             return response;
         }
 
+        /// <summary>
+        /// Put request, update an object but different endpoint
+        /// </summary>
+        /// <param name="endpoint">url path</param>
+        /// <param name="id">object id</param>
+        /// <param name="obj">updated object</param>
+        /// <returns></returns>
         public async Task<HttpResponseMessage> PutAsync(string endpoint, int id, object obj)
         {
             var endPointUrl = $"{APIUrl}/{endpoint}/{id}";
@@ -159,6 +189,12 @@ namespace XamarinBase.Services
             return response;
         }
 
+        /// <summary>
+        /// Put request, update an object
+        /// </summary>
+        /// <param name="url">path for the endpoint</param>
+        /// <param name="obj">updated object</param>
+        /// <returns></returns>
         public async Task<HttpResponseMessage> PutAsync(string url, object obj)
         {
             var httpContent = CreateHttpContent(obj);
@@ -168,6 +204,13 @@ namespace XamarinBase.Services
             return response;
         }
 
+
+        /// <summary>
+        /// Delete request
+        /// </summary>
+        /// <typeparam name="T">object type to delete</typeparam>
+        /// <param name="id">id of the object to delete</param>
+        /// <returns></returns>
         public async Task<HttpResponseMessage> DeleteAsync<T>(int id)
         {
             var endPointUrl = $"{APIUrl}/{typeof(T).Name}s/{id}";
@@ -177,6 +220,12 @@ namespace XamarinBase.Services
             return response;
         }
 
+        /// <summary>
+        /// Delete request
+        /// </summary>
+        /// <param name="url">path for the endpoint</param>
+        /// <param name="id">id of the object</param>
+        /// <returns></returns>
         public async Task<HttpResponseMessage> DeleteAsync(string url, int id)
         {
             var response = await HttpClient.DeleteAsync(url);

@@ -17,6 +17,10 @@ using Plugin.LocalNotifications;
 
 namespace XamarinBase.ViewModels
 {
+    /// <summary>
+    /// View model of the Main View. Shows the plants, and navigation to connection 
+    /// edit view
+    /// </summary>
     public class MainViewModel : BaseViewModel
     {
         private readonly ISignalRService _signalRService;
@@ -52,21 +56,34 @@ namespace XamarinBase.ViewModels
             _signalRService.Build();
             
 
-
+            // change the current view of the page to the PlantsView
             PlantsView();
         }
 
+        /// <summary>
+        /// Handler for the dataloggers warning message
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void _signalRService_OnReceiveWarning(object sender, WarningEventArgs e)
         {
+            // return if there is no warning
             if (!e.IsWarning) return;
 
+            // get the measurement
             var measurement = e.Measurement;
 
+            // send notification to the app
             CrossLocalNotifications.Current.Show("Tree Warning", $"Tree {measurement.PlantId} with datalogger {measurement.DataloggerId} has dry soil or too low temperature");
         }
 
+        /// <summary>
+        /// Connects to signalR
+        /// </summary>
+        /// <returns></returns>
         public async Task ConnectSignalR()
         {
+            // return if already connected
             if (_signalRService.IsConnected)
             {
                 return;
@@ -74,8 +91,12 @@ namespace XamarinBase.ViewModels
 
             try
             {
+                // start connecting
                 await _signalRService.StartAsync();
+
+                // register the mobile app in the signalR server
                 await _signalRService.RegisterApp();
+
                 await Application.Current.MainPage.DisplayAlert("Alert", $"SignalR Success", "Ok", "Cancel");
 
             }
@@ -85,16 +106,28 @@ namespace XamarinBase.ViewModels
             }
         }
 
+        /// <summary>
+        /// Navigates to the create/edit PlantDetailsView
+        /// </summary>
+        /// <returns></returns>
         public async Task CreatePlant()
         {
             await (App.Current.MainPage as NavigationPage).PushAsync(new PlantDetailsView());
         }
+
+        /// <summary>
+        /// Changes the current view of the page to the ConnectionView
+        /// </summary>
+        /// <returns></returns>
         public async Task ConnectionView()
         {
             CurrentContentView = new ConnectionView();
         }
 
-
+        /// <summary>
+        /// Changes the current view of the page to the PlantsView
+        /// </summary>
+        /// <returns></returns>
         public async Task PlantsView()
         {
             CurrentContentView = new PlantsView();

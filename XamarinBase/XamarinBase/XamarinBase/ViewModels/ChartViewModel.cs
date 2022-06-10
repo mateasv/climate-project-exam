@@ -11,6 +11,9 @@ using XamarinBase.Services;
 
 namespace XamarinBase.ViewModels
 {
+    /// <summary>
+    /// This view model stores the charts and the measurements of a tree 
+    /// </summary>
     public class ChartViewModel : BaseViewModel
     {
         private readonly IChartService _chartService;
@@ -50,14 +53,17 @@ namespace XamarinBase.ViewModels
 
             GenerateChartCmd = new Command(async () => await GenerateChart());
 
-
             Measurements = new ObservableCollection<Measurement>();
         }
 
+        /// <summary>
+        /// Method used generate the charts for the charts view
+        /// </summary>
+        /// <returns></returns>
         public async Task GenerateChart()
         {
-            AirHumidityChart = _chartService.CreateChart(Measurements,m => m.AirHumidity, m => m.MeasurementDate.ToString());
-            AirTemperatureChart = _chartService.CreateChart(Measurements,m => m.AirTemperature, m => m.MeasurementDate.ToString());
+            AirHumidityChart = _chartService.CreateChart(Measurements, m => m.AirHumidity, m => m.MeasurementDate.ToString());
+            AirTemperatureChart = _chartService.CreateChart(Measurements, m => m.AirTemperature, m => m.MeasurementDate.ToString());
         }
 
     }

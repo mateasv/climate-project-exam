@@ -5,6 +5,9 @@ using Xamarin.Forms;
 
 namespace XamarinBase.ViewModels
 {
+    /// <summary>
+    /// Base view model used as the superclass of all view models
+    /// </summary>
     public class BaseViewModel : BindableObject
     {
         private string _errorMessage;

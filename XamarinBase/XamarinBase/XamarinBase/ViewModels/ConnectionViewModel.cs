@@ -8,6 +8,9 @@ using XamarinBase.Services;
 
 namespace XamarinBase.ViewModels
 {
+    /// <summary>
+    /// View model used by the Connection view
+    /// </summary>
     public class ConnectionViewModel : BaseViewModel
     {
         private ISignalRService _signalRService;
@@ -51,6 +54,10 @@ namespace XamarinBase.ViewModels
             DatabaseUrl = _databaseService.APIUrl;
         }
 
+        /// <summary>
+        /// Confirm and build the signalR and Database service
+        /// </summary>
+        /// <returns></returns>
         public async Task Confirm()
         {
             _databaseService.APIUrl = DatabaseUrl;

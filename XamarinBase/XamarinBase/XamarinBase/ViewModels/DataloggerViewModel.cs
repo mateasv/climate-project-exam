@@ -14,8 +14,5 @@ namespace XamarinBase.ViewModels
             get { return _datalogger; }
             set { _datalogger = value; OnPropertyChanged(); }
         }
-
-
-
     }
 }

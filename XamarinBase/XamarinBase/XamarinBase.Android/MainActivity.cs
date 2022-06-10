@@ -15,19 +15,34 @@ using XamarinBase.Droid;
 using Android;
 using Plugin.LocalNotifications;
 
+
+// Add Android implementation of the HttpClientHandler into the common dependency container
 [assembly: Dependency(typeof(HTTPClientHandlerCreationService_Android))]
 namespace XamarinBase.Droid
 {
+    /// <summary>
+    /// Android implementation of the Http client handler used in the DatabaseService
+    /// to ignore SSL verification
+    /// </summary>
     public class HTTPClientHandlerCreationService_Android : IHTTPClientHandlerCreationService
     {
+        /// <summary>
+        /// Gets the android http client handler
+        /// </summary>
+        /// <returns></returns>
         public HttpClientHandler GetInsecureHandler()
         {
             return new IgnoreSSLClientHandler();
         }
     }
 
+    /// <summary>
+    /// Class extending the AndroidClientHandler and used to override necessary SSL
+    /// responsible methods.
+    /// </summary>
     internal class IgnoreSSLClientHandler : AndroidClientHandler
     {
+        
         protected override SSLSocketFactory ConfigureCustomSSLSocketFactory(HttpsURLConnection connection)
         {
             return SSLCertificateSocketFactory.GetInsecure(1000, null);
