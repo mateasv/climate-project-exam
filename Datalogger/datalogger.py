@@ -5,16 +5,18 @@ import time
 from datetime import datetime
 from gpiozero import DigitalInputDevice
 import requests
-import asyncio
-from signalr_async.netcore import Hub, Client
-from signalr_async.netcore.protocols import MessagePackProtocol
 import RPi.GPIO as GPIO
+from signalrcore.protocol.messagepack_protocol import MessagePackHubProtocol
+from signalrcore.hub_connection_builder import HubConnectionBuilder
+import signal
+import urllib3
+urllib3.disable_warnings()
 
 ## Settings
 backend_ip = "10.176.132.59"
-backend_port = "5189"
-backend_url = 'http://%s:%s/api/DataloggerMeasurements'%(backend_ip, backend_port) # Default: /api/DataloggerMeasurements
-send_interval_in_sec = 3600 # 3600 = 1 hour
+backend_port = "7189" #5189
+backend_url = 'https://%s:%s/api/DataloggerMeasurements'%(backend_ip, backend_port) # Default: /api/DataloggerMeasurements
+send_interval_in_sec = 15 # 3600 = 1 hour
 print_status_message_interval = 15 # Prints a "Sending measurement in xx:yy:zz" every x seconds
 
 # LED setup
@@ -36,56 +38,65 @@ soilSensor = DigitalInputDevice(22) # DO label on board
 # counter % 3600 = send data to backend
 counter = 0
 
-# MyHub class with various events
-class MyHub(Hub):
-  async def on_connect(self, connection_id: str) -> None:
-    print("SignalR is connected.")
+# Setup SignalR hub connection,
+# disabled verify_ssl due to self signed certificate.
+hub = HubConnectionBuilder()\
+  .with_url("https://%s:%s/treehub"%(backend_ip, backend_port), options={"verify_ssl":False})\
+  .with_automatic_reconnect({
+    "type": "raw",
+    "keep_alive_interval": 10,
+    "reconnect_interval": 5,
+    "max_attempts": 5
+  }).build()
 
-  async def on_disconnect(self) -> None:
-    # Turn off the green LED
-    GPIO.output(25,GPIO.LOW)
-    # Turn on the red LED
-    GPIO.output(24,GPIO.HIGH)
-    print("SignalR disconnected.")
+# Callback function to be called when the SignalR connection has connected.
+def openn():
+  print('SignalR is connected')
+  print('Registering Datalogger...')
+  hub.send("RegisterDatalogger", [1])
+  GPIO.output(24,GPIO.LOW)
+  GPIO.output(25,GPIO.HIGH)
 
-  def ReceiveWarning(self, x: str) -> None:
-    # Since we got a warning, we turn on the red LED
-    GPIO.output(24,GPIO.HIGH)
-    print("Warning was received.")
-    print(self)
-    print("###")
-    print(x)
-
-  def ReceiveDataloggerPair (self, x: str) -> None:
-    print("Datalogger was paired with new device.")
-    print(self)
-    print("###")
-    print(x)
-
-hub = MyHub("treehub")
-
-@hub.on("ReceiveWarning")
-async def ReceiveWarning() -> None:
+# Callback function to be called when the SignalR connection has been closed.
+def close():
+  print('SignalR connection closed')
   GPIO.output(24,GPIO.HIGH)
-  print("Warning was received.---")
-  print(self)
-  print("###")
-  print(x)
-  pass
+  GPIO.output(25,GPIO.LOW)
 
-@hub.on("ReceiveDataloggerPair")
-async def ReceiveDataloggerPair() -> None:
-  print("Datalogger was paired with new device.----")
-  print(self)
-  print("###")
-  print(x)
-  pass
+# Callback function to be called when a warning is received from the backend.
+def warning(*args):
+  
+  print(args[0][0])
+  if (args[0][1]):
+    print('Warning Received!')
+    GPIO.output(24,GPIO.HIGH)
+    GPIO.output(25,GPIO.HIGH)
+  else:
+    print('No warning received!')
+    GPIO.output(24,GPIO.LOW)
+    GPIO.output(25,GPIO.HIGH)
+  
+  print(args[0][1])
 
-# Subscribe to the SignalR events
-hub.on('ReceiveWarning', ReceiveWarning)
-hub.on('ReceiveDataloggerPair', ReceiveDataloggerPair)
+# Set up event handlers for the SignalR connection
+hub.on_open(openn)
+hub.on_close(close)
+hub.on("ReceiveWarning", warning)
+hub.start()
 
+# Function to handle SIGINT signal.
+# To close the SignalR connection properly before exiting.
+def sigint_handler(signum, frame):
+  print("Turning off datalogger..")
+  hub.stop()
+  print("Datalogger off!")
+  time.sleep(0.25)
+  exit(1)
 
+# Register sigint handler
+signal.signal(signal.SIGINT, sigint_handler)
+
+# Convert seconds to a better looking formatted string HH:MM:SS
 def convertSecondsToHHMMSS(sec):
   sec = sec % (24 * 3600)
   hour = sec // 3600
@@ -95,41 +106,22 @@ def convertSecondsToHHMMSS(sec):
     
   return "%d:%02d:%02d" % (hour, minutes, sec)
 
-async def main():
-  print("Registering datalogger in the backend")
-  token = "mytoken"
-  headers = {"Authorization": f"Bearer {token}"}
-  print("Starting Client")
-  async with Client(
-    "http://%s:%s"%(backend_ip, backend_port),
-    hub,
-    connection_options={
-      "http_client_options": {"headers": headers, "verify_ssl": False},
-      "ws_client_options": {"headers": headers, "timeout": 1.0, "verify_ssl": False},
-      "protocol": MessagePackProtocol()
-    },
-  ) as client:
-    await hub.invoke("RegisterDatalogger", 1)
-    print("Datalogger is now registered and working")
-    # Light up the green LED
-    GPIO.output(25,GPIO.HIGH)
-    
-    global counter
-    while True:
-      if counter > 3:
-        break
-      if counter % 20 == 0 and counter != 0:
-        print('Sending measurement in ' + convertSecondsToHHMMSS(send_interval_in_sec - counter))
-      if counter % send_interval_in_sec == 0:
-        counter = 0
-        x = requests.post(backend_url, timeout=5, verify=False, json={"DataloggerId": 1,
-        "PlantId": 1,
-        "SoilHumidity": 1,
-        "AirHumidity": airSensor.relative_humidity,
-        "AirTemperature": 900,#airSensor.temperature,
-        "SoilIsDry": soilSensor.value == 1 if True else False})
-        print('Measurement was successfully sent')
-      counter += 1
-      time.sleep(1)
-
-asyncio.run(main())
+# The main loop responsible for giving status messages and doing
+# automatic climate readings at the given interval (Default one hour)
+while True:
+  # Showing a status message every 20th second
+  if counter % 20 == 0 and counter != 0:
+    print('Sending measurement in ' + convertSecondsToHHMMSS(send_interval_in_sec - counter))
+  # Make and send climate reading when the counter hits the given interval
+  if counter % send_interval_in_sec == 0:
+    counter = 0
+    x = requests.post(backend_url, timeout=5, verify=False, json={"DataloggerId": 1,
+    "PlantId": 1,
+    "SoilHumidity": 1,
+    "AirHumidity": airSensor.relative_humidity,
+    "AirTemperature": 900,#airSensor.temperature,
+    "SoilIsDry": soilSensor.value == 1 if True else False})
+    print('Measurement was successfully sent')
+  counter += 1
+  # Wait a second before ticking the counter again
+  time.sleep(1)
