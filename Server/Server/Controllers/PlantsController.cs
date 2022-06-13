@@ -53,7 +53,7 @@ namespace Server.Controllers
             return plant;
         }
 
-        // GET: api/Plants/datalogger
+        // GET: api/Plants/datalogger/5
         [HttpGet("datalogger/{id}")]
         public async Task<ActionResult<Plant>> GetPlantByDataloggerId(int id)
         {

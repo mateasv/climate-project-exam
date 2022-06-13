@@ -8,6 +8,5 @@ namespace Server.Dtos
         public int? PlantTypeId { get; set; }
         public DateTime? WarrantyStartDate { get; set; }
         public float? Price { get; set; }
-        public byte[]? Image { get; set; }
     }
 }
