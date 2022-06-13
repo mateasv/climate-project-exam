@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Server.Dtos;
 using Server.Hubs;
 using Server.Models;
 
@@ -17,11 +19,13 @@ namespace Server.Controllers
     {
         private readonly TreeDBContext _context;
         private readonly IHubContext<TreeHub> _hubContext;
+        private readonly IMapper _mapper;
 
-        public PlantsController(TreeDBContext context, IHubContext<TreeHub> hubContext)
+        public PlantsController(TreeDBContext context, IHubContext<TreeHub> hubContext, IMapper mapper)
         {
             _context = context;
             _hubContext = hubContext;
+            _mapper = mapper;
         }
 
         // GET: api/Plants
@@ -55,7 +59,7 @@ namespace Server.Controllers
 
         // GET: api/Plants/datalogger/5
         [HttpGet("datalogger/{id}")]
-        public async Task<ActionResult<Plant>> GetPlantByDataloggerId(int id)
+        public async Task<ActionResult<PlantDto>> GetPlantByDataloggerId(int id)
         {
             if (_context.Plants == null)
             {
@@ -68,7 +72,7 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            return plant;
+            return _mapper.Map<PlantDto>(plant);
         }
 
         // PUT: api/Plants/5
