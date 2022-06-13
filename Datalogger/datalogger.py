@@ -12,12 +12,23 @@ import signal
 import urllib3
 urllib3.disable_warnings()
 
-## Settings
+######## START OF SETTINGS ########
+# Backend IP, PORT and URL.
 backend_ip = "10.176.132.59"
 backend_port = "7189" #5189
-backend_url = 'https://%s:%s/api/DataloggerMeasurements'%(backend_ip, backend_port) # Default: /api/DataloggerMeasurements
+backend_url = 'https://%s:%s'%(backend_ip, backend_port) # Default: /api/DataloggerMeasurements
+
+# Interval to send measurement
 send_interval_in_sec = 15 # 3600 = 1 hour
+
+# How often to print a status message
 print_status_message_interval = 15 # Prints a "Sending measurement in xx:yy:zz" every x seconds
+
+# The ID for this datalogger
+dataloggerID = 1
+######## END OF SETTINGS ########
+
+
 
 # LED setup
 GPIO.setmode(GPIO.BCM)
@@ -45,13 +56,18 @@ hub = HubConnectionBuilder()\
   .with_automatic_reconnect({
     "type": "raw",
     "keep_alive_interval": 10,
-    "reconnect_interval": 5,
+    "reconnect_interval": 6,
     "max_attempts": 5
   }).build()
 
 # Callback function to be called when the SignalR connection has connected.
-def openn():
+def openn(*args):
   print('SignalR is connected')
+  print("######")
+  print(args)
+  print("######")
+  print(args[0])
+  print("######")
   print('Registering Datalogger...')
   hub.send("RegisterDatalogger", [1])
   GPIO.output(24,GPIO.LOW)
@@ -65,8 +81,7 @@ def close():
 
 # Callback function to be called when a warning is received from the backend.
 def warning(*args):
-  
-  print(args[0][0])
+  # Check whether the backend has told us if the warning LED should light up.
   if (args[0][1]):
     print('Warning Received!')
     GPIO.output(24,GPIO.HIGH)
@@ -75,14 +90,26 @@ def warning(*args):
     print('No warning received!')
     GPIO.output(24,GPIO.LOW)
     GPIO.output(25,GPIO.HIGH)
-  
-  print(args[0][1])
+
+currentPlantID = 0 # The plantID to save the ID's for.
+def newdatalogger(*args):
+  print("The datalogger is now logging for plant #" + str(currentPlantID))
+  currentPlantID = args[0][0]['plantId']
+
 
 # Set up event handlers for the SignalR connection
 hub.on_open(openn)
 hub.on_close(close)
 hub.on("ReceiveWarning", warning)
+hub.on("ReceiveDataloggerPair", newdatalogger)
 hub.start()
+
+# Get the plant ID that this datalogger is assigned to
+assigned_plant = requests.get(backend_url + '/api/plants/datalogger/' + str(dataloggerID), timeout=10, verify=False)
+assigned_plant = assigned_plant.content.decode('UTF-8')
+assigned_plant = eval(assigned_plant)
+print("This is your assigned plant ID:")
+print(assigned_plant.content.decode('UTF-8'))
 
 # Function to handle SIGINT signal.
 # To close the SignalR connection properly before exiting.
@@ -103,8 +130,14 @@ def convertSecondsToHHMMSS(sec):
   sec %= 3600
   minutes = sec // 60
   sec %= 60
-    
   return "%d:%02d:%02d" % (hour, minutes, sec)
+
+# Don't start the datalogger until we have the assigned Plant ID
+while True:
+  if currentPlantID == 0:
+    time.sleep(1)
+  else:
+    break
 
 # The main loop responsible for giving status messages and doing
 # automatic climate readings at the given interval (Default one hour)
@@ -115,13 +148,13 @@ while True:
   # Make and send climate reading when the counter hits the given interval
   if counter % send_interval_in_sec == 0:
     counter = 0
-    x = requests.post(backend_url, timeout=5, verify=False, json={"DataloggerId": 1,
-    "PlantId": 1,
+    requests.post(backend_url + str("/api/DataloggerMeasurements"), timeout=8, verify=False, json={"DataloggerId": dataloggerID,
+    "PlantId": currentPlantID,
     "SoilHumidity": 1,
     "AirHumidity": airSensor.relative_humidity,
-    "AirTemperature": 900,#airSensor.temperature,
+    "AirTemperature": airSensor.temperature,
     "SoilIsDry": soilSensor.value == 1 if True else False})
-    print('Measurement was successfully sent')
+    print('Measurement was successfully sent for plant #' + str(currentPlantID))
   counter += 1
   # Wait a second before ticking the counter again
   time.sleep(1)
