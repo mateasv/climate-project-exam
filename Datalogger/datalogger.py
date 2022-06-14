@@ -9,6 +9,7 @@ import RPi.GPIO as GPIO
 from signalrcore.protocol.messagepack_protocol import MessagePackHubProtocol
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 import signal
+import json
 import urllib3
 urllib3.disable_warnings()
 
@@ -63,11 +64,6 @@ hub = HubConnectionBuilder()\
 # Callback function to be called when the SignalR connection has connected.
 def openn(*args):
   print('SignalR is connected')
-  print("######")
-  print(args)
-  print("######")
-  print(args[0])
-  print("######")
   print('Registering Datalogger...')
   hub.send("RegisterDatalogger", [1])
   GPIO.output(24,GPIO.LOW)
@@ -104,12 +100,29 @@ hub.on("ReceiveWarning", warning)
 hub.on("ReceiveDataloggerPair", newdatalogger)
 hub.start()
 
-# Get the plant ID that this datalogger is assigned to
-assigned_plant = requests.get(backend_url + '/api/plants/datalogger/' + str(dataloggerID), timeout=10, verify=False)
-assigned_plant = assigned_plant.content.decode('UTF-8')
-assigned_plant = eval(assigned_plant)
-print("This is your assigned plant ID:")
-print(assigned_plant.content.decode('UTF-8'))
+timeout_for_next_request = 1
+while True:
+  # Wait a second, to give the backend time, to successfully register the datalogger.
+  # The timeout for the next request will increment every time this runs, however it will limit at 20 seconds.
+  print("Trying to get assigned plant ID (From API) in " + str(timeout_for_next_request) + " second(s).")
+  time.sleep(timeout_for_next_request if timeout_for_next_request >= 20 else ++timeout_for_next_request)
+
+  # In case the user changes the datalogger ID before the GET request is done, we stop this loop
+  # (... since we already got the plant ID from the SignalR event that changed the currentPlantID value)
+  if currentPlantID != 0:
+    break
+
+  # Get the plant ID that this datalogger is assigned to (If any)
+  assigned_plant = requests.get(backend_url + '/api/plants/datalogger/' + str(dataloggerID), timeout=10, verify=False)
+  assigned_plant = assigned_plant.content.decode('UTF-8')
+  if assigned_plant is None:
+    print("The datalogger is not yet assigned to a datalogger.")
+    continue
+
+  assigned_plant = json.loads(assigned_plant) #eval(assigned_plant)
+  currentPlantID = assigned_plant["plantId"]
+  print("Plant ID received (From API): #" + str(currentPlantID))
+  break
 
 # Function to handle SIGINT signal.
 # To close the SignalR connection properly before exiting.
