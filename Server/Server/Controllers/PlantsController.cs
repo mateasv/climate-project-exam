@@ -59,7 +59,7 @@ namespace Server.Controllers
 
         // GET: api/Plants/datalogger/5
         [HttpGet("datalogger/{id}")]
-        public async Task<ActionResult<PlantDto>> GetPlantByDataloggerId(int id)
+        public async Task<ActionResult<PlantDto>> GetPlantDtoByDataloggerId(int id)
         {
             if (_context.Plants == null)
             {
@@ -73,6 +73,24 @@ namespace Server.Controllers
             }
 
             return _mapper.Map<PlantDto>(plant);
+        }
+
+        // GET: api/Plants/datalogger/5
+        [HttpGet("dataloggerplant/{id}")]
+        public async Task<ActionResult<Plant>> GetPlantByDataloggerId(int id)
+        {
+            if (_context.Plants == null)
+            {
+                return NotFound();
+            }
+            var plant = await _context.Plants.FirstOrDefaultAsync(plant => plant.DataloggerId == id);
+
+            if (plant == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<Plant>(plant);
         }
 
         // PUT: api/Plants/5

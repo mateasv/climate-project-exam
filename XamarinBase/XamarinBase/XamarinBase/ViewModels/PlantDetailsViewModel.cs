@@ -211,7 +211,7 @@ namespace XamarinBase.ViewModels
             }
 
             // check if the datalogger is already paired
-            var res = await _databaseService.GetAsync<Plant>("datalogger", datalogger.DataloggerId);
+            var res = await _databaseService.GetAsync<Plant>("dataloggerplant", datalogger.DataloggerId);
 
             // if this datalogger is not paired then create and pair the plant
             if (!res.IsSuccessStatusCode)

@@ -31,7 +31,8 @@ namespace XamarinBase.Services
 
         public HttpClient HttpClient { get; set; }
 
-        public DatabaseService(IHTTPClientHandlerCreationService clienthandler = null)
+        
+        public DatabaseService(IHTTPClientHandlerCreationService clienthandler)
         {
             _httpHandlerCreationService = clienthandler;
 
@@ -44,7 +45,7 @@ namespace XamarinBase.Services
              * https://stackoverflow.com/questions/28629989/ignore-ssl-certificate-errors-in-xamarin-forms-pcl/54318410#54318410
              */
 
-            // if the program is not using Xamarin.forms
+            // if the program is not using Xamarin.forms, used when performing Unit tests
             if (_httpHandlerCreationService == null)
             {
                 // setup the httpclient handler with ssl bypass for testing the program
