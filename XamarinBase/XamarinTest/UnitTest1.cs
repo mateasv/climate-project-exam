@@ -14,10 +14,10 @@ namespace XamarinTest
     public class UnitTest1
     {
         [Fact]
-        public async Task Dbtest_GetPlant()
+        public async Task DB_GetPlants_should_return_response_content_as_not_null()
         {
             // arrange
-            var db = new DatabaseService();
+            var db = new DatabaseService(null);
 
             // act
 
@@ -33,7 +33,7 @@ namespace XamarinTest
         public async Task DbTest()
         {
             // arrange
-            var db = new DatabaseService();
+            var db = new DatabaseService(null);
             db.APIUrl = "https://localhost:7189/api";
             db.Build();
 

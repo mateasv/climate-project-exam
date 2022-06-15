@@ -51,7 +51,25 @@ namespace XamarinBase
             services.AddSingleton<IDatabaseService,DatabaseService>();
             services.AddSingleton<ISignalRService,SignalRService>();
             services.AddSingleton<IChartService,ChartService>();
-            services.AddSingleton(DependencyService.Get<IHTTPClientHandlerCreationService>());
+
+            // Setup of services that dependant on specific platforms
+            switch (Device.RuntimePlatform)
+            {
+                case Device.Android:
+                    // add Android implementation of IHttpClientHandler service
+                    services.AddSingleton(DependencyService.Get<IHTTPClientHandlerCreationService>());
+                    break;
+                case Device.iOS:
+                    // add iOS implementation of IHttpClientHandler service
+                    //services.AddSingleton(DependencyService.Get<IHTTPClientHandlerCreationServiceIOS>());
+                    break;
+                default:
+                    // add other implementation of IHttpClientHandler service
+                    //services.AddSingleton(DependencyService.Get<IHTTPClientHandlerCreationServiceOtherPlatform>());
+                    break;
+            }
+
+            
 
             ServiceProvider = services.BuildServiceProvider();
         }
