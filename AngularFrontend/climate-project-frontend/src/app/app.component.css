@@ -1,0 +1,18 @@
+header {
+    background-color: #2980b9;
+    padding: 10px 0;
+    color: #fff;
+}
+
+.links {
+    margin-top: 6px;
+}
+
+.links a {
+    color: #fff;
+    font-size: 1.2em;
+}
+
+.links span:not(:first-child) {
+    margin-left: 8px;
+}

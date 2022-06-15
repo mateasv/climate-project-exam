@@ -1,1 +1,19 @@
-<p>datalogger-list works!</p>
+<h2>Datalogger List</h2>
+<div style="display: flex;">
+    <table>
+        <tr>
+          <th>Datalogger ID</th>
+          <th>Min Air Humidity</th>
+          <th>Max Air Humidity</th>
+          <th>Min Air Temperature</th>
+          <th>Max Air Temperature</th>
+        </tr>
+        <tr *ngFor="let datalogger of dataloggers" class="datalogger">
+            <td>#{{datalogger.dataloggerId}}</td>
+            <td>{{datalogger.minAirHumidity}}%</td>
+            <td>{{datalogger.maxAirHumidity}}%</td>
+            <td>{{datalogger.minAirTemperature}}°C</td>
+            <td>{{datalogger.maxAirTemperature}}°C</td>
+        </tr>
+    </table> 
+</div>

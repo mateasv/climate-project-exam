@@ -1,0 +1,18 @@
+h2 {
+    text-align: center;
+    margin: 12px 0;
+    font-size: 1.8em;
+}
+
+table {
+    margin: 0 auto;
+}
+
+th {
+    font-size: 1.2em;
+    padding: 2px 12px;
+}
+
+td {
+    padding: 2px 12px;
+}

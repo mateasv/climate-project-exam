@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { RemoteService } from '../remote.service';
 
 @Component({
   selector: 'app-datalogger-list',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DataloggerListComponent implements OnInit {
 
-  constructor() { }
+  constructor(private remoteService:RemoteService) { }
+
+  public dataloggers:any = [];
 
   ngOnInit(): void {
+    this.loadDataloggers();
   }
 
+  loadDataloggers() {
+    return this.remoteService.getDataloggers().subscribe((data: {}) => {
+      this.dataloggers = data;
+    });
+  }
 }

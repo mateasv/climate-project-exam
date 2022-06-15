@@ -1,6 +1,4 @@
-import { Observable, throwError } from 'rxjs'; // new
 import { Component, OnInit } from '@angular/core';
-import { Plant } from '../plant';
 import { RemoteService } from '../remote.service';
 
 @Component({

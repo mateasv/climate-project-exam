@@ -1,0 +1,30 @@
+h2 {
+    text-align: center;
+    margin: 12px 0;
+    font-size: 1.8em;
+}
+
+.plant {
+    border-radius: 6px;
+    margin: 12px;
+}
+
+.plantImage {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eee;
+}
+
+.plantImage > img {
+    max-width: 200px;
+    max-height: 200px;
+    min-width: 50px;
+    min-height: 50px;
+}
+
+.plant > p {
+    margin-top: 6px;
+}
