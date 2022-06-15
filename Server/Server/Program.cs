@@ -18,6 +18,12 @@ builder.Services.AddDbContext<TreeDBContext>(options =>
 builder.Services.AddAutoMapper(typeof(Program)); // https://code-maze.com/automapper-net-core/
 builder.Services.AddControllers().AddControllersAsServices();
 
+builder.Services.AddCors(opts => opts.AddDefaultPolicy(builder =>
+{
+    builder.AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod();
+}));
 
 var app = builder.Build();
 
