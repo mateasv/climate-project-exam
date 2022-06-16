@@ -4,22 +4,13 @@
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="XamarinBase.MainView"
              xmlns:vm="clr-namespace:XamarinBase.ViewModels">
-    <!--<ContentPage.Behaviors>
-        <xct:EventToCommandBehavior EventName="Appearing" Command="{Binding ConnectSignalRCmd}"></xct:EventToCommandBehavior>
-    </ContentPage.Behaviors>-->
 
 
     <Grid RowDefinitions="9*,1*">
         <ContentView Grid.Row="0" Content="{Binding CurrentContentView}"></ContentView>
-        <Grid Grid.Row="1" ColumnDefinitions="*,*,*,*">
+        <Grid Grid.Row="1" ColumnDefinitions="*,*">
             <Button Grid.Column="0" Text="Overview" Command="{Binding PlantsViewCmd}"></Button>
             <Button Grid.Column="1" Text="Connection" Command="{Binding ConnectionViewCmd}"></Button>
-            <Button Grid.Column="2" Text="C"></Button>
-            <Button Grid.Column="3" Text="D"></Button>
         </Grid>
     </Grid>
-    
-    
-
-    
 </ContentPage>
