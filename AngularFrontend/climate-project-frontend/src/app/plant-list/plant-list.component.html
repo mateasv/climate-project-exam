@@ -1,0 +1,9 @@
+<h2>Plant List</h2>
+<div style="display: flex;">
+    <div *ngFor="let plant of plants" class="plant">
+        <div class="plantImage">
+            <img style="display: flex; flex-direction: column;" src="data:image/png;base64,{{plant.image ? plant.image : 'R0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs'}}">
+        </div>
+        <p style="align-self: flex-end;">Plant ID: {{plant.plantId}}<br>Datalogger ID: {{plant.dataloggerId}}<br>Plant Type: {{plant.plantTypeId}}<br>Price {{plant.price}} DKK</p>
+    </div>
+</div>
