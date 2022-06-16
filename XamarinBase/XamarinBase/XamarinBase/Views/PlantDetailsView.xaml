@@ -10,6 +10,7 @@
                 <Button Grid.Column="1" Text="Datalogger Details" Command="{Binding DataloggerDetailsCmd}"></Button>
                 <Button Grid.Column="2" Text="Confirm" Command="{Binding ConfirmCmd}"></Button>
                 <Button Grid.Column="3" Text="Chart" Command="{Binding ChartCmd}"></Button>
+                <Button Grid.Column="3" Text="Create Certificate" Command="{Binding CreateCertificateCmd}"></Button>
             </Grid>
         </Grid>
     </ContentPage.Content>

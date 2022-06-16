@@ -47,6 +47,7 @@ namespace XamarinBase.ViewModels
         public ICommand DataloggerDetailsCmd { get; set; }
         public ICommand ConfirmCmd { get; set; }
         public ICommand ChartCmd { get; set; }
+        public ICommand CreateCertificateCmd { get; set; }
         
 
         public PlantDetailsViewModel(
@@ -65,9 +66,22 @@ namespace XamarinBase.ViewModels
             DataloggerDetailsCmd = new Command(async () => await DataloggerDetails());
             ConfirmCmd = new Command(async () => await Confirm());
             ChartCmd = new Command(async () => await Chart());
+            CreateCertificateCmd = new Command(async () => await CreateCertificate());
 
             // Restore the old plant values if the edit view is canceled
             (Application.Current.MainPage as NavigationPage).Popped += RestoreOldPlant;
+        }
+
+        public async Task CreateCertificate()
+        {
+            try
+            {
+                await _databaseService.PostAsync($"{_databaseService.APIUrl}/certificate?plantid={_editPlantViewModel.PlantViewModel.Plant.PlantId}", null);
+            }
+            catch (Exception e)
+            {
+                await Application.Current.MainPage.DisplayAlert("Alert", $"{e.Message}", "Ok", "Cancel");
+            }
         }
 
         public async Task PlantDetails()

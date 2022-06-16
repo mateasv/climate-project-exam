@@ -52,7 +52,7 @@ namespace XamarinBase
             services.AddSingleton<ISignalRService,SignalRService>();
             services.AddSingleton<IChartService,ChartService>();
 
-            // Setup of services that dependant on specific platforms
+            // Setup of services that are dependant on specific platforms
             switch (Device.RuntimePlatform)
             {
                 case Device.Android:

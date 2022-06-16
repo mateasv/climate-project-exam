@@ -1,0 +1,7 @@
+Certificate for plant Id: 1
+
+Plant Type: Cyperus papyrus                                                                                                                                                                                                                                                 
+
+Measurement Id: 1 Datalogger Id: 1 Plant Id: 1 Air Humidity: 22 Air Temperature: 33 Soil Is Dry: False Date: 05-06-2022 01:00:00
+Measurement Id: 2 Datalogger Id: 1 Plant Id: 1 Air Humidity: 33 Air Temperature: 44 Soil Is Dry: False Date: 05-06-2022 02:00:00
+Measurement Id: 3 Datalogger Id: 1 Plant Id: 1 Air Humidity: 14 Air Temperature: 15 Soil Is Dry: False Date: 05-06-2022 03:00:00
