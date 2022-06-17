@@ -20,7 +20,7 @@ backend_port = "7189" #5189
 backend_url = 'https://%s:%s'%(backend_ip, backend_port) # Default: /api/DataloggerMeasurements
 
 # Interval to send measurement
-send_interval_in_sec = 15 # 3600 = 1 hour
+send_interval_in_sec = 3600 # 3600 = 1 hour
 
 # How often to print a status message
 print_status_message_interval = 15 # Prints a "Sending measurement in xx:yy:zz" every x seconds
